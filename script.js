@@ -7,8 +7,7 @@
 /* =========================================================
    WEBSITE URL
 ========================================================= */
-const WEBSITE_URL =
-    "https://kavyasree432.github.io/scan-ganesha/";
+const WEBSITE_URL = window.location.origin + window.location.pathname;
 
 
 const helloText = "Hello!";
@@ -1312,49 +1311,29 @@ function nextQuizQuestion() {
 /* =========================================================
    QR CODE
 ========================================================= */
-
 function createQRCode() {
-
-    const qr =
-        document.getElementById("qrcode");
-
+    const qr = document.getElementById("qrcode");
 
     if (!qr) return;
 
-
     qr.innerHTML = "";
 
-
     if (typeof QRCode === "undefined") {
-
-        qr.innerHTML =
-            "<p>QR library could not load.</p>";
-
+        qr.innerHTML = "<p>QR library could not load.</p>";
         return;
-
     }
 
+    const currentWebsiteURL =
+        window.location.origin + window.location.pathname;
 
-    new QRCode(
-        qr,
-        {
-
-            text: WEBSITE_URL,
-
-            width: 240,
-
-            height: 240,
-
-            colorDark: "#650808",
-
-            colorLight: "#ffffff",
-
-            correctLevel:
-                QRCode.CorrectLevel.H
-
-        }
-    );
-
+    new QRCode(qr, {
+        text: currentWebsiteURL,
+        width: 240,
+        height: 240,
+        colorDark: "#650808",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
 }
 
 
