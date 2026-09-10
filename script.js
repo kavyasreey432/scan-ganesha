@@ -8,7 +8,8 @@
    WEBSITE URL
 ========================================================= */
 const WEBSITE_URL =
-    "https://kavyasree432.github.io/scan-ganesha/index.html";
+    "https://kavyasree432.github.io/scan-ganesha/";
+
 
 const helloText = "Hello!";
 
