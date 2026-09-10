@@ -7,9 +7,9 @@
 /* =========================================================
    WEBSITE URL
 ========================================================= */
-
 const WEBSITE_URL =
-    "https://kavyasree432.github.io/scan-ganesha/";
+    "https://kavyasree432.github.io/scan-ganesha/index.html";
+
 const helloText = "Hello!";
 
 function speakHello() {
