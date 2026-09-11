@@ -10,52 +10,6 @@
 const WEBSITE_URL = window.location.origin + window.location.pathname;
 
 
-const helloText = "Hello!";
-
-function speakHello() {
-    if ("speechSynthesis" in window) {
-
-        window.speechSynthesis.cancel();
-
-        const voice = new SpeechSynthesisUtterance(helloText);
-
-        voice.lang = "en-IN";
-        voice.rate = 0.85;
-        voice.pitch = 1.1;
-        voice.volume = 1;
-
-        voice.onend = function () {
-            setTimeout(() => {
-                showPage("wishPage");
-            }, 700);
-        };
-
-        window.speechSynthesis.speak(voice);
-
-    } else {
-        // If speech is not supported
-        setTimeout(() => {
-            showPage("wishPage");
-        }, 1500);
-    }
-}
-document.addEventListener("DOMContentLoaded", function () {
-
-    const startButton = document.getElementById("startDivineBtn");
-
-    if (startButton) {
-        startButton.addEventListener("click", function () {
-
-            startButton.innerHTML = "🔊 Ganesha is speaking...";
-
-            startButton.disabled = true;
-
-            speakHello();
-
-        });
-    }
-
-});
 
 /* =========================================================
    PAGE NAVIGATION
@@ -758,6 +712,7 @@ const songs = [
    LOAD MUSIC
 ========================================================= */
 
+
 function loadMusic() {
 
     const container =
@@ -765,22 +720,16 @@ function loadMusic() {
 
     if (!container) return;
 
-
     container.innerHTML = "";
 
-
-    songs.forEach(function(song,index) {
+    songs.forEach(function(song, index) {
 
         const card =
             document.createElement("div");
 
-
-        card.className =
-            "song-card";
-
+        card.className = "song-card";
 
         card.innerHTML = `
-
             <div class="song-icon">
                 🎵
             </div>
@@ -795,7 +744,6 @@ function loadMusic() {
                     controls
                     preload="metadata"
                 >
-
                     <source
                         src="${song.file}"
                         type="audio/mpeg"
@@ -807,17 +755,34 @@ function loadMusic() {
                 </audio>
 
             </div>
-
         `;
 
-
         container.appendChild(card);
+
+        // Get this song's audio player
+        const audio =
+            card.querySelector("audio");
+
+        // When this song starts playing,
+        // pause all other songs
+        audio.addEventListener("play", function() {
+
+            const allAudio =
+                container.querySelectorAll("audio");
+
+            allAudio.forEach(function(otherAudio) {
+
+                if (otherAudio !== audio) {
+                    otherAudio.pause();
+                }
+
+            });
+
+        });
 
     });
 
 }
-
-
 /* =========================================================
    GALLERY
 ========================================================= */
