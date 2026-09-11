@@ -7,9 +7,8 @@
 /* =========================================================
    WEBSITE URL
 ========================================================= */
+const WEBSITE_URL = window.location.origin + window.location.pathname;
 
-const WEBSITE_URL =
-    window.location.origin + window.location.pathname;
 
 
 /* =========================================================
@@ -18,414 +17,433 @@ const WEBSITE_URL =
 
 function showPage(pageId) {
 
-    document.querySelectorAll(".page").forEach(function (page) {
+    document.querySelectorAll(".page").forEach(function(page) {
+
         page.classList.remove("active");
+
     });
 
-    const page = document.getElementById(pageId);
+
+    const page =
+        document.getElementById(pageId);
+
 
     if (page) {
+
         page.classList.add("active");
+
     }
+
 
     window.scrollTo({
         top: 0,
         behavior: "smooth"
     });
 
-    /* Load QR code whenever QR page is opened */
+
     if (pageId === "qrPage") {
-        setTimeout(function () {
+
+        setTimeout(function() {
+
             createQRCode();
+
         }, 100);
+
     }
 
-    /* Load quiz whenever quiz page is opened */
+
     if (pageId === "quizPage") {
+
         loadQuiz();
+
     }
 
-    /* Update final page */
-    if (pageId === "finalPage") {
-        updateFinal();
-    }
 }
 
 
 /* =========================================================
-   GANESHA STORIES
+   COMPLETE GANESHA STORIES
 ========================================================= */
 
 const stories = [
 
-    {
-        title:
-            "The Race for the Cosmic Fruit (The Triumph of Intellect over Speed)",
+{
+title:
+"The Race for the Cosmic Fruit (The Triumph of Intellect over Speed)",
 
-        paragraphs: [
+paragraphs: [
 
-            `Once, Lord Ganesha and his brother Kartikeya were given a
-            special challenge by their parents, Lord Shiva and Goddess
-            Parvati.`,
+`Once, Lord Ganesha and his brother Kartikeya were given a
+special challenge by their parents, Lord Shiva and Goddess
+Parvati.`,
 
-            `A divine fruit representing knowledge and wisdom was brought
-            before them. Both brothers wanted the fruit, but it could not
-            be divided.`,
+`A divine fruit representing knowledge and wisdom was brought
+before them. Both brothers wanted the fruit, but it could not
+be divided.`,
 
-            `Their parents announced that whoever could travel around the
-            world and return first would receive the fruit.`,
+`Their parents announced that whoever could travel around the
+world and return first would receive the fruit.`,
 
-            `Kartikeya immediately mounted his peacock and travelled at
-            great speed around the world.`,
+`Kartikeya immediately mounted his peacock and travelled at
+great speed around the world.`,
 
-            `Ganesha looked at his small mouse vehicle. He understood that
-            he could not win a race based on physical speed.`,
+`Ganesha looked at his small mouse vehicle. He understood that
+he could not win a race based on physical speed.`,
 
-            `Instead of giving up, Ganesha thought deeply about the meaning
-            of the challenge.`,
+`Instead of giving up, Ganesha thought deeply about the meaning
+of the challenge.`,
 
-            `He then walked respectfully around Lord Shiva and Goddess
-            Parvati three times.`,
+`He then walked respectfully around Lord Shiva and Goddess
+Parvati three times.`,
 
-            `When his parents asked why he had done this, Ganesha explained
-            that his parents represented his entire world. Therefore,
-            walking around them was equal to travelling around the universe.`,
+`When his parents asked why he had done this, Ganesha explained
+that his parents represented his entire world. Therefore,
+walking around them was equal to travelling around the universe.`,
 
-            `Kartikeya eventually returned from his journey and realised
-            that Ganesha had found a wiser solution.`
-        ],
+`Kartikeya eventually returned from his journey and realised
+that Ganesha had found a wiser solution.`
 
-        meaning:
-            `The story teaches that intelligence and understanding can be
-            more powerful than physical speed. A difficult problem can
-            sometimes be solved by changing the way we look at it.`
-    },
+],
 
+meaning:
+`The story teaches that intelligence and understanding can be
+more powerful than physical speed. A difficult problem can
+sometimes be solved by changing the way we look at it.`
+},
 
-    {
-        title:
-            "The Broken Tusk (The Writing of the Mahabharata)",
 
-        paragraphs: [
+{
+title:
+"The Broken Tusk (The Writing of the Mahabharata)",
 
-            `The Mahabharata is one of the greatest epics of India.
-            According to a traditional account, the sage Vyasa wanted
-            someone capable of writing down the epic as he dictated it.`,
+paragraphs: [
 
-            `Vyasa approached Lord Ganesha and requested him to become the
-            scribe.`,
+`The Mahabharata is one of the greatest epics of India.
+According to a traditional account, the sage Vyasa wanted
+someone capable of writing down the epic as he dictated it.`,
 
-            `Ganesha agreed, but placed a condition: Vyasa must continue
-            reciting without interruption.`,
+`Vyasa approached Lord Ganesha and requested him to become the
+scribe.`,
 
-            `Vyasa accepted but added his own condition. Ganesha should
-            write only after understanding the meaning of every verse.`,
+`Ganesha agreed, but placed a condition: Vyasa must continue
+reciting without interruption.`,
 
-            `The great work began. Vyasa recited and Ganesha wrote.`,
+`Vyasa accepted but added his own condition. Ganesha should
+write only after understanding the meaning of every verse.`,
 
-            `During the process, Ganesha's writing instrument broke.`,
+`The great work began. Vyasa recited and Ganesha wrote.`,
 
-            `Because he had promised not to stop writing, Ganesha broke one
-            of his own tusks and used it as a writing instrument.`,
+`During the process, Ganesha's writing instrument broke.`,
 
-            `He continued writing and completed the enormous task.`,
+`Because he had promised not to stop writing, Ganesha broke one
+of his own tusks and used it as a writing instrument.`,
 
-            `This traditional story is one reason Ganesha is often shown
-            with one broken tusk.`
-        ],
+`He continued writing and completed the enormous task.`,
 
-        meaning:
-            `The broken tusk represents sacrifice, determination,
-            knowledge and dedication. It teaches us not to allow obstacles
-            to stop an important task.`
-    },
+`This traditional story is one reason Ganesha is often shown
+with one broken tusk.`
 
+],
 
-    {
-        title:
-            "The Curse of the Moon (Conquering the Ego)",
+meaning:
+`The broken tusk represents sacrifice, determination,
+knowledge and dedication. It teaches us not to allow obstacles
+to stop an important task.`
+},
 
-        paragraphs: [
 
-            `One traditional story tells that Lord Ganesha was returning
-            home after enjoying a large feast.`,
+{
+title:
+"The Curse of the Moon (Conquering the Ego)",
 
-            `His belly was full of delicious food, including modaks.`,
+paragraphs: [
 
-            `As he travelled on his mouse vehicle, the mouse became
-            frightened after seeing a snake and stumbled.`,
+`One traditional story tells that Lord Ganesha was returning
+home after enjoying a large feast.`,
 
-            `Ganesha fell from the mouse and some of the food spilled.`,
+`His belly was full of delicious food, including modaks.`,
 
-            `The Moon, Chandra, saw the incident and laughed at Ganesha.`,
+`As he travelled on his mouse vehicle, the mouse became
+frightened after seeing a snake and stumbled.`,
 
-            `The Moon was proud of his beauty and brilliance.`,
+`Ganesha fell from the mouse and some of the food spilled.`,
 
-            `Ganesha became displeased with the Moon's arrogance and
-            placed a curse upon him.`,
+`The Moon, Chandra, saw the incident and laughed at Ganesha.`,
 
-            `The Moon realised his mistake and sincerely asked Ganesha
-            for forgiveness.`,
+`The Moon was proud of his beauty and brilliance.`,
 
-            `Ganesha eventually softened the curse.`,
+`Ganesha became displeased with the Moon's arrogance and
+placed a curse upon him.`,
 
-            `The story became associated with traditional beliefs about
-            the Moon and Ganesha Chaturthi.`
-        ],
+`The Moon realised his mistake and sincerely asked Ganesha
+for forgiveness.`,
 
-        meaning:
-            `The story teaches humility. Beauty, fame and status should
-            never become reasons for pride or for making fun of another
-            person.`
-    },
+`Ganesha eventually softened the curse.`,
 
+`The story became associated with traditional beliefs about
+the Moon and Ganesha Chaturthi.`
 
-    {
-        title:
-            "Outsmarting the Demon of Pride (The Story of Kubera's Feast)",
+],
 
-        paragraphs: [
+meaning:
+`The story teaches humility. Beauty, fame and status should
+never become reasons for pride or for making fun of another
+person.`
+},
 
-            `Kubera was traditionally regarded as the god of wealth.`,
 
-            `Because of his enormous riches, Kubera became proud of his
-            possessions.`,
+{
+title:
+"Outsmarting the Demon of Pride (The Story of Kubera's Feast)",
 
-            `He invited Lord Shiva and Goddess Parvati to a grand feast
-            because he wanted to display his wealth.`,
+paragraphs: [
 
-            `Lord Shiva understood the pride behind the invitation and
-            suggested that Kubera feed Lord Ganesha instead.`,
+`Kubera was traditionally regarded as the god of wealth.`,
 
-            `Kubera happily accepted the challenge.`,
+`Because of his enormous riches, Kubera became proud of his
+possessions.`,
 
-            `Ganesha arrived and began eating.`,
+`He invited Lord Shiva and Goddess Parvati to a grand feast
+because he wanted to display his wealth.`,
 
-            `He ate the food that had been prepared and continued asking
-            for more.`,
+`Lord Shiva understood the pride behind the invitation and
+suggested that Kubera feed Lord Ganesha instead.`,
 
-            `Kubera ordered the cooks to prepare more and more food, but
-            Ganesha continued eating.`,
+`Kubera happily accepted the challenge.`,
 
-            `Kubera's enormous wealth suddenly seemed insignificant.`,
+`Ganesha arrived and began eating.`,
 
-            `Kubera became frightened and realised that material wealth
-            could not make him truly great.`,
+`He ate the food that had been prepared and continued asking
+for more.`,
 
-            `He approached Shiva and recognised his mistake.`
-        ],
+`Kubera ordered the cooks to prepare more and more food, but
+Ganesha continued eating.`,
 
-        meaning:
-            `The story teaches that wealth should always be accompanied
-            by humility. True greatness comes from wisdom and character,
-            not from possessions.`
-    },
+`Kubera's enormous wealth suddenly seemed insignificant.`,
 
+`Kubera became frightened and realised that material wealth
+could not make him truly great.`,
 
-    {
-        title:
-            "Saving the Earth from Ravana (The Story of the Atma-Linga)",
+`He approached Shiva and recognised his mistake.`
 
-        paragraphs: [
+],
 
-            `A popular traditional legend connects Lord Ganesha with the
-            Atma-Linga and the sacred place of Gokarna.`,
+meaning:
+`The story teaches that wealth should always be accompanied
+by humility. True greatness comes from wisdom and character,
+not from possessions.`
+},
 
-            `Ravana, the powerful king of Lanka, performed intense penance
-            and received the sacred Atma-Linga.`,
 
-            `He wanted to carry it to Lanka.`,
+{
+title:
+"Saving the Earth from Ravana (The Story of the Atma-Linga)",
 
-            `He was instructed that the sacred Linga must not be placed
-            on the ground.`,
+paragraphs: [
 
-            `The gods became concerned about the power Ravana would gain
-            if he successfully carried the Atma-Linga to Lanka.`,
+`A popular traditional legend connects Lord Ganesha with the
+Atma-Linga and the sacred place of Gokarna.`,
 
-            `Lord Ganesha appeared in the form of a young boy.`,
+`Ravana, the powerful king of Lanka, performed intense penance
+and received the sacred Atma-Linga.`,
 
-            `Ravana needed someone to hold the Linga temporarily while
-            he performed his prayers.`,
+`He wanted to carry it to Lanka.`,
 
-            `Ganesha agreed but warned him that he could call Ravana only
-            a limited number of times.`,
+`He was instructed that the sacred Linga must not be placed
+on the ground.`,
 
-            `When Ravana did not return quickly enough, Ganesha placed
-            the Atma-Linga on the ground.`,
+`The gods became concerned about the power Ravana would gain
+if he successfully carried the Atma-Linga to Lanka.`,
 
-            `Ravana returned and tried to lift it with enormous strength,
-            but he could not move it.`,
+`Lord Ganesha appeared in the form of a young boy.`,
 
-            `The sacred Linga remained at Gokarna.`
-        ],
+`Ravana needed someone to hold the Linga temporarily while
+he performed his prayers.`,
 
-        meaning:
-            `The story teaches that intelligence can overcome enormous
-            strength and power.`
-    },
+`Ganesha agreed but warned him that he could call Ravana only
+a limited number of times.`,
 
+`When Ravana did not return quickly enough, Ganesha placed
+the Atma-Linga on the ground.`,
 
-    {
-        title:
-            "The Shield of Parvati (How Ganesha Gained His Elephant Head)",
+`Ravana returned and tried to lift it with enormous strength,
+but he could not move it.`,
 
-        paragraphs: [
+`The sacred Linga remained at Gokarna.`
 
-            `Goddess Parvati wished to bathe privately.`,
+],
 
-            `According to a traditional account, she created a young
-            guardian from turmeric paste or material from her body.`,
+meaning:
+`The story teaches that intelligence can overcome enormous
+strength and power.`
+},
 
-            `She instructed him to guard the entrance and not allow anyone
-            to enter.`,
 
-            `The young guardian was Ganesha.`,
+{
+title:
+"The Shield of Parvati (How Ganesha Gained His Elephant Head)",
 
-            `Lord Shiva later returned to Mount Kailash and wished to enter.`,
+paragraphs: [
 
-            `Ganesha did not recognise him in the situation and faithfully
-            followed his mother's command.`,
+`Goddess Parvati wished to bathe privately.`,
 
-            `A confrontation developed between Shiva and Ganesha.`,
+`According to a traditional account, she created a young
+guardian from turmeric paste or material from her body.`,
 
-            `During the fierce conflict, Shiva severed Ganesha's head.`,
+`She instructed him to guard the entrance and not allow anyone
+to enter.`,
 
-            `Parvati was devastated and demanded that Ganesha be restored.`,
+`The young guardian was Ganesha.`,
 
-            `Shiva agreed to bring him back to life.`,
+`Lord Shiva later returned to Mount Kailash and wished to enter.`,
 
-            `An elephant's head was brought and placed upon Ganesha.`,
+`Ganesha did not recognise him in the situation and faithfully
+followed his mother's command.`,
 
-            `Shiva restored Ganesha to life and honoured him as the leader
-            of the Ganas.`
-        ],
+`A confrontation developed between Shiva and Ganesha.`,
 
-        meaning:
-            `The story represents devotion, duty, transformation and the
-            divine origin of Ganesha's distinctive elephant-headed form.`
-    },
+`During the fierce conflict, Shiva severed Ganesha's head.`,
 
+`Parvati was devastated and demanded that Ganesha be restored.`,
 
-    {
-        title:
-            "The Mango Trick (Ganesha and Kartikeya's Friendly Rivalry)",
+`Shiva agreed to bring him back to life.`,
 
-        paragraphs: [
+`An elephant's head was brought and placed upon Ganesha.`,
 
-            `A special mango representing divine knowledge was brought
-            before Lord Shiva and Goddess Parvati.`,
+`Shiva restored Ganesha to life and honoured him as the leader
+of the Ganas.`
 
-            `Ganesha and Kartikeya both wanted the fruit.`,
+],
 
-            `Their parents announced that whoever could travel around the
-            world and return first would receive it.`,
+meaning:
+`The story represents devotion, duty, transformation and the
+divine origin of Ganesha's distinctive elephant-headed form.`
+},
 
-            `Kartikeya immediately mounted his peacock and began travelling.`,
 
-            `Ganesha knew that his mouse could never match the speed of
-            the peacock.`,
+{
+title:
+"The Mango Trick (Ganesha and Kartikeya's Friendly Rivalry)",
 
-            `He therefore thought about the deeper meaning of the contest.`,
+paragraphs: [
 
-            `Ganesha respectfully walked around his parents three times.`,
+`A special mango representing divine knowledge was brought
+before Lord Shiva and Goddess Parvati.`,
 
-            `He explained that Shiva and Parvati represented the whole
-            universe for him.`,
+`Ganesha and Kartikeya both wanted the fruit.`,
 
-            `Therefore, circumambulating them was equal to travelling
-            around the world.`,
+`Their parents announced that whoever could travel around the
+world and return first would receive it.`,
 
-            `Kartikeya eventually returned and understood his brother's
-            wisdom.`,
+`Kartikeya immediately mounted his peacock and began travelling.`,
 
-            `Ganesha received the mango.`
-        ],
+`Ganesha knew that his mouse could never match the speed of
+the peacock.`,
 
-        meaning:
-            `The story teaches wisdom, devotion, creative thinking and
-            respect for parents.`
-    },
+`He therefore thought about the deeper meaning of the contest.`,
 
+`Ganesha respectfully walked around his parents three times.`,
 
-    {
-        title:
-            "The Creation of the River Cauvery (How Ganesha Fooled Sage Agastya)",
+`He explained that Shiva and Parvati represented the whole
+universe for him.`,
 
-        paragraphs: [
+`Therefore, circumambulating them was equal to travelling
+around the world.`,
 
-            `A popular traditional legend connects Lord Ganesha with the
-            origin of the sacred River Cauvery.`,
+`Kartikeya eventually returned and understood his brother's
+wisdom.`,
 
-            `Sage Agastya is said to have carried sacred water in a vessel.`,
+`Ganesha received the mango.`
 
-            `The water was destined to flow across the land and bring
-            life and prosperity.`,
+],
 
-            `According to the legend, Lord Ganesha appeared in the form
-            of a crow.`,
+meaning:
+`The story teaches wisdom, devotion, creative thinking and
+respect for parents.`
+},
 
-            `The crow approached the vessel and disturbed it.`,
 
-            `The vessel fell and the sacred water began to flow.`,
+{
+title:
+"The Creation of the River Cauvery (How Ganesha Fooled Sage Agastya)",
 
-            `The flowing water became associated with the River Cauvery.`,
+paragraphs: [
 
-            `Sage Agastya realised that what appeared to be an accident
-            was part of a divine plan.`,
+`A popular traditional legend connects Lord Ganesha with the
+origin of the sacred River Cauvery.`,
 
-            `The Cauvery became an important river of southern India,
-            supporting agriculture, culture and communities.`
-        ],
+`Sage Agastya is said to have carried sacred water in a vessel.`,
 
-        meaning:
-            `The story reminds us that divine plans can sometimes appear
-            through unexpected events. It also reminds us of the importance
-            of rivers and water to life.`
-    },
+`The water was destined to flow across the land and bring
+life and prosperity.`,
 
+`According to the legend, Lord Ganesha appeared in the form
+of a crow.`,
 
-    {
-        title:
-            "The Secrets of His Form (The Big Belly and the Tiny Mouse)",
+`The crow approached the vessel and disturbed it.`,
 
-        paragraphs: [
+`The vessel fell and the sacred water began to flow.`,
 
-            `Lord Ganesha's physical form is filled with symbolic meaning.
-            Each part of his appearance represents a lesson.`,
+`The flowing water became associated with the River Cauvery.`,
 
-            `His elephant head represents wisdom, intelligence, strength
-            and memory.`,
+`Sage Agastya realised that what appeared to be an accident
+was part of a divine plan.`,
 
-            `His large ears remind devotees to listen carefully and learn
-            from wisdom.`,
+`The Cauvery became an important river of southern India,
+supporting agriculture, culture and communities.`
 
-            `His single tusk is traditionally associated with keeping
-            what is valuable and letting go of what is unnecessary.`,
+],
 
-            `His large belly represents the ability to accept and digest
-            the different experiences of life.`,
+meaning:
+`The story reminds us that divine plans can sometimes appear
+through unexpected events. It also reminds us of the importance
+of rivers and water to life.`
+},
 
-            `His vehicle is the tiny mouse.`,
 
-            `The mouse is often associated with restless desires and the
-            constantly moving human mind.`,
+{
+title:
+"The Secrets of His Form (The Big Belly and the Tiny Mouse)",
 
-            `Ganesha riding the mouse symbolises control over desires and
-            mastery of the mind.`,
+paragraphs: [
 
-            `His hands and the objects he carries are also traditionally
-            given symbolic meanings related to protection, blessings,
-            knowledge and discipline.`,
+`Lord Ganesha's physical form is filled with symbolic meaning.
+Each part of his appearance represents a lesson.`,
 
-            `Together, these features make Ganesha's form a visual lesson
-            in wisdom, humility, self-control and balance.`
-        ],
+`His elephant head represents wisdom, intelligence, strength
+and memory.`,
 
-        meaning:
-            `Ganesha's form teaches us that wisdom should control the
-            restless mind and that true greatness can exist together
-            with humility.`
-    }
+`His large ears remind devotees to listen carefully and learn
+from wisdom.`,
+
+`His single tusk is traditionally associated with keeping
+what is valuable and letting go of what is unnecessary.`,
+
+`His large belly represents the ability to accept and digest
+the different experiences of life.`,
+
+`His vehicle is the tiny mouse.`,
+
+`The mouse is often associated with restless desires and the
+constantly moving human mind.`,
+
+`Ganesha riding the mouse symbolises control over desires and
+mastery of the mind.`,
+
+`His hands and the objects he carries are also traditionally
+given symbolic meanings related to protection, blessings,
+knowledge and discipline.`,
+
+`Together, these features make Ganesha's form a visual lesson
+in wisdom, humility, self-control and balance.`
+
+],
+
+meaning:
+`Ganesha's form teaches us that wisdom should control the
+restless mind and that true greatness can exist together
+with humility.`
+}
 
 ];
 
@@ -441,20 +459,30 @@ function loadStories() {
 
     if (!container) return;
 
+
     container.innerHTML = "";
 
-    stories.forEach(function (story, index) {
+
+    stories.forEach(function(story,index) {
 
         const card =
             document.createElement("article");
 
-        card.className = "story-card";
+
+        card.className =
+            "story-card";
+
 
         let paragraphs = "";
 
-        story.paragraphs.forEach(function (text) {
-            paragraphs += `<p>${text}</p>`;
+
+        story.paragraphs.forEach(function(text) {
+
+            paragraphs +=
+                `<p>${text}</p>`;
+
         });
+
 
         card.innerHTML = `
 
@@ -479,10 +507,14 @@ function loadStories() {
                 </p>
 
             </div>
+
         `;
 
+
         container.appendChild(card);
+
     });
+
 }
 
 
@@ -492,97 +524,97 @@ function loadStories() {
 
 const mantras = [
 
-    {
-        title: "గణపతిమాలామంత్రాః",
+{
+title: "గణపతిమాలామంత్రాః",
 
-        text:
-            `ఓం గం గణపతయే నమః
+text:
+`ఓం గం గణపతయే నమః
 ఓం శ్రీం హ్రీం క్లీం గ్లౌం గం గణపతయే వరవరద సర్వజనం మే వశమానయ స్వాహా`
-    },
+},
 
 
-    {
-        title: "శ్రీ లక్ష్మీ గణపతి స్తోత్రం",
+{
+title: "శ్రీ లక్ష్మీ గణపతి స్తోత్రం",
 
-        text:
-            `సుముఖశ్చైకదంతశ్చ కపిలో గజకర్ణకః
+text:
+`సుముఖశ్చైకదంతశ్చ కపిలో గజకర్ణకః
 లంబోదరశ్చ వికటో విఘ్నరాజో గణాధిపః
 ధూమకేతుర్గణాధ్యక్షో ఫాలచంద్రో గజాననః`
-    },
+},
 
 
-    {
-        title: "మహా గణపతి రక్షా మంత్రం",
+{
+title: "మహా గణపతి రక్షా మంత్రం",
 
-        text:
-            `ఓం గం గణపతయే నమః
+text:
+`ఓం గం గణపతయే నమః
 సర్వ విఘ్న వినాశాయ
 సర్వ కార్య సిద్ధయే
 శ్రీ మహాగణపతయే నమః`
-    },
+},
 
 
-    {
-        title: "గణపతి మంత్రము",
+{
+title: "గణపతి మంత్రము",
 
-        text:
-            `ఓం గం గణపతయే నమః
+text:
+`ఓం గం గణపతయే నమః
 వక్రతుండ మహాకాయ
 సూర్యకోటి సమప్రభ
 నిర్విఘ్నం కురుమే దేవ
 శుభకార్యేషు సర్వదా`
-    },
+},
 
 
-    {
-        title: "వక్రతుండ మహాకాయ శ్లోకం",
+{
+title: "వక్రతుండ మహాకాయ శ్లోకం",
 
-        text:
-            `వక్రతుండ మహాకాయ
+text:
+`వక్రతుండ మహాకాయ
 సూర్యకోటి సమప్రభః
 నిర్విఘ్నం కురుమే దేవ
 శుభకార్యేషు సర్వదా`
-    },
+},
 
 
-    {
-        title: "గణపతి మూల మంత్రం",
+{
+title: "గణపతి మూల మంత్రం",
 
-        text:
-            `ఓం గం గణపతయే నమః`
-    },
+text:
+`ఓం గం గణపతయే నమః`
+},
 
 
-    {
-        title: "గణేశ గాయత్రీ మంత్రం",
+{
+title: "గణేశ గాయత్రీ మంత్రం",
 
-        text:
-            `ఓం ఏకదంతాయ విద్మహే
+text:
+`ఓం ఏకదంతాయ విద్మహే
 వక్రతుండాయ ధీమహి
 తన్నో దంతిః ప్రచోదయాత్`
-    },
+},
 
 
-    {
-        title: "గజాననం భూతగణాది సేవితం",
+{
+title: "గజాననం భూతగణాది సేవితం",
 
-        text:
-            `గజాననం భూతగణాదిసేవితం
+text:
+`గజాననం భూతగణాదిసేవితం
 కపిత్థజంబూఫలచారుభక్షణమ్
 ఉమాసుతం శోకవినాశకారణం
 నమామి విఘ్నేశ్వరపాదపంకజమ్`
-    },
+},
 
 
-    {
-        title: "శుక్లాంబరధరం",
+{
+title: "శుక్లాంబరధరం",
 
-        text:
-            `శుక్లాంబరధరం విష్ణుం
+text:
+`శుక్లాంబరధరం విష్ణుం
 శశివర్ణం చతుర్భుజమ్
-ప్రసన్నవదనం ధ్యాయేత్
+प्रसन्नवदనం ధ్యాయేత్
 సర్వవిఘ్నోపశాంతయే`
-    }
+}
 
 ];
 
@@ -598,14 +630,19 @@ function loadMantras() {
 
     if (!container) return;
 
+
     container.innerHTML = "";
 
-    mantras.forEach(function (mantra, index) {
+
+    mantras.forEach(function(mantra,index) {
 
         const card =
             document.createElement("div");
 
-        card.className = "mantra-card";
+
+        card.className =
+            "mantra-card";
+
 
         card.innerHTML = `
 
@@ -614,56 +651,59 @@ function loadMantras() {
             </h2>
 
             <div class="mantra-text">
-                ${mantra.text.replace(/\n/g, "<br>")}
+                ${mantra.text}
             </div>
 
         `;
 
+
         container.appendChild(card);
+
     });
+
 }
 
 
 /* =========================================================
-   MUSIC
+   7 SONGS
 ========================================================= */
 
 const songs = [
 
-    {
-        name: "Suklam Bharadharam",
-        file: "audio/suklam baradharam.mp3.mpeg"
-    },
+{
+    name: "Suklam Bharadharam",
+    file: "audio/suklam baradharam.mp3.mpeg"
+},
 
-    {
-        name: "Bujji Bujji Ganapayya",
-        file: "audio/bujji bujji ganapayya.mp3"
-    },
+{
+    name: "Bujji Bujji Ganapayya",
+    file: "audio/bujji bujji ganapayya.mp3"
+},
 
-    {
-        name: "Maha Ganapatim",
-        file: "audio/maha ganapatim.mp3"
-    },
+{
+    name: "Maha Ganapatim",
+    file: "audio/maha ganapatim.mp3"
+},
 
-    {
-        name: "Jai Jai Ganesha",
-        file: "audio/jai jai ganesha.mp3"
-    },
+{
+    name: "Jai Jai Ganesha",
+    file: "audio/jai jai ganesha.mp3"
+},
 
-    {
-        name: "Undrallayyo",
-        file: "audio/undrallayo.mp3"
-    },
+{
+    name: "Undrallayyo",
+    file: "audio/undrallayo.mp3"
+},
 
-    {
-        name: "Gananayakaya",
-        file: "audio/gananayakaya.mp3"
-    },
+{
+    name: "Gananayakaya",
+    file: "audio/gananayakaya.mp3"
+},
 
-    {
-        name: "Bappa Morya",
-        file: "audio/bappa morya.mp3.mpeg"
-    }
+{
+    name: "Bappa Morya",
+    file: "audio/bappa morya.mp3.mpeg"
+}
 
 ];
 
@@ -671,6 +711,7 @@ const songs = [
 /* =========================================================
    LOAD MUSIC
 ========================================================= */
+
 
 function loadMusic() {
 
@@ -681,7 +722,7 @@ function loadMusic() {
 
     container.innerHTML = "";
 
-    songs.forEach(function (song, index) {
+    songs.forEach(function(song, index) {
 
         const card =
             document.createElement("div");
@@ -689,7 +730,6 @@ function loadMusic() {
         card.className = "song-card";
 
         card.innerHTML = `
-
             <div class="song-icon">
                 🎵
             </div>
@@ -704,9 +744,8 @@ function loadMusic() {
                     controls
                     preload="metadata"
                 >
-
                     <source
-                        src="${encodeURI(song.file)}"
+                        src="${song.file}"
                         type="audio/mpeg"
                     >
 
@@ -720,17 +759,18 @@ function loadMusic() {
 
         container.appendChild(card);
 
+        // Get this song's audio player
         const audio =
             card.querySelector("audio");
 
-        /* Only one song plays at a time */
-
-        audio.addEventListener("play", function () {
+        // When this song starts playing,
+        // pause all other songs
+        audio.addEventListener("play", function() {
 
             const allAudio =
                 container.querySelectorAll("audio");
 
-            allAudio.forEach(function (otherAudio) {
+            allAudio.forEach(function(otherAudio) {
 
                 if (otherAudio !== audio) {
                     otherAudio.pause();
@@ -743,8 +783,6 @@ function loadMusic() {
     });
 
 }
-
-
 /* =========================================================
    GALLERY
 ========================================================= */
@@ -766,13 +804,6 @@ const galleryImages = [
 ];
 
 
-let currentGalleryIndex = 0;
-
-
-/* =========================================================
-   LOAD GALLERY
-========================================================= */
-
 function loadGallery() {
 
     const container =
@@ -780,26 +811,30 @@ function loadGallery() {
 
     if (!container) return;
 
+
     container.innerHTML = "";
 
-    galleryImages.forEach(function (image, index) {
+
+    galleryImages.forEach(function(image,index) {
 
         const card =
             document.createElement("div");
 
-        card.className = "gallery-card";
+
+        card.className =
+            "gallery-card";
+
 
         card.innerHTML = `
 
             <img
                 src="${image}"
                 alt="Lord Ganesha ${index + 1}"
-                loading="lazy"
-                onclick="openGalleryImage(${index})"
-                onerror="this.style.display='none'"
+                onclick="openGalleryImage('${image}')"
             >
 
         `;
+
 
         container.appendChild(card);
 
@@ -808,106 +843,9 @@ function loadGallery() {
 }
 
 
-/* =========================================================
-   GALLERY MODAL
-========================================================= */
+function openGalleryImage(image) {
 
-function openGalleryImage(index) {
-
-    currentGalleryIndex = index;
-
-    let modal =
-        document.getElementById("galleryModal");
-
-    if (!modal) {
-
-        modal =
-            document.createElement("div");
-
-        modal.id = "galleryModal";
-
-        modal.className = "gallery-modal";
-
-        modal.innerHTML = `
-
-            <button
-                class="gallery-close"
-                onclick="closeGallery()"
-            >
-                ✕
-            </button>
-
-            <button
-                class="gallery-prev"
-                onclick="changeGallery(-1)"
-            >
-                ❮
-            </button>
-
-            <img
-                id="galleryModalImage"
-                src=""
-                alt="Ganesha Gallery"
-            >
-
-            <button
-                class="gallery-next"
-                onclick="changeGallery(1)"
-            >
-                ❯
-            </button>
-
-        `;
-
-        document.body.appendChild(modal);
-    }
-
-    renderGalleryModal();
-
-    modal.classList.add("show");
-}
-
-
-function renderGalleryModal() {
-
-    const image =
-        document.getElementById("galleryModalImage");
-
-    if (!image) return;
-
-    image.src =
-        galleryImages[currentGalleryIndex];
-}
-
-
-function changeGallery(direction) {
-
-    currentGalleryIndex += direction;
-
-    if (currentGalleryIndex < 0) {
-        currentGalleryIndex =
-            galleryImages.length - 1;
-    }
-
-    if (
-        currentGalleryIndex >=
-        galleryImages.length
-    ) {
-        currentGalleryIndex = 0;
-    }
-
-    renderGalleryModal();
-}
-
-
-function closeGallery() {
-
-    const modal =
-        document.getElementById("galleryModal");
-
-    if (modal) {
-        modal.classList.remove("show");
-    }
+    window.open(image,"_blank");
 
 }
 
@@ -918,235 +856,140 @@ function closeGallery() {
 
 const quizQuestions = [
 
-    {
-        question:
-            "Who is Lord Ganesha's mother?",
+{
+question:
+"Who is Lord Ganesha's mother?",
 
-        options: [
-            "Goddess Lakshmi",
-            "Goddess Parvati",
-            "Goddess Saraswati",
-            "Goddess Ganga"
-        ],
+options:
+[
+"Goddess Lakshmi",
+"Goddess Parvati",
+"Goddess Saraswati",
+"Goddess Ganga"
+],
 
-        answer: 1
-    },
-
-
-    {
-        question:
-            "What is Lord Ganesha traditionally known as the remover of?",
-
-        options: [
-            "Mountains",
-            "Obstacles",
-            "Rivers",
-            "Stars"
-        ],
-
-        answer: 1
-    },
+answer: 1
+},
 
 
-    {
-        question:
-            "What is Ganesha's vehicle?",
+{
+question:
+"What is Lord Ganesha traditionally known as the remover of?",
 
-        options: [
-            "Peacock",
-            "Lion",
-            "Mouse",
-            "Elephant"
-        ],
+options:
+[
+"Mountains",
+"Obstacles",
+"Rivers",
+"Stars"
+],
 
-        answer: 2
-    },
-
-
-    {
-        question:
-            "Which sweet is especially associated with Lord Ganesha?",
-
-        options: [
-            "Jalebi",
-            "Modak",
-            "Payasam",
-            "Puri"
-        ],
-
-        answer: 1
-    },
+answer: 1
+},
 
 
-    {
-        question:
-            "Who is Lord Ganesha's father?",
+{
+question:
+"What is Ganesha's vehicle?",
 
-        options: [
-            "Lord Vishnu",
-            "Lord Brahma",
-            "Lord Shiva",
-            "Lord Indra"
-        ],
+options:
+[
+"Peacock",
+"Lion",
+"Mouse",
+"Elephant"
+],
 
-        answer: 2
-    },
-
-
-    {
-        question:
-            "Which festival celebrates the birth of Lord Ganesha?",
-
-        options: [
-            "Diwali",
-            "Holi",
-            "Vinayaka Chaturthi",
-            "Navaratri"
-        ],
-
-        answer: 2
-    },
+answer: 2
+},
 
 
-    {
-        question:
-            "Which animal head does Lord Ganesha have?",
+{
+question:
+"Which sweet is especially associated with Lord Ganesha?",
 
-        options: [
-            "Lion",
-            "Elephant",
-            "Horse",
-            "Bull"
-        ],
+options:
+[
+"Jalebi",
+"Modak",
+"Payasam",
+"Puri"
+],
 
-        answer: 1
-    },
-
-
-    {
-        question:
-            "What do Ganesha's large ears traditionally remind us to do?",
-
-        options: [
-            "Speak loudly",
-            "Listen carefully",
-            "Run quickly",
-            "Sleep peacefully"
-        ],
-
-        answer: 1
-    },
+answer: 1
+},
 
 
-    {
-        question:
-            "What is the traditional name of Ganesha's broken tusk?",
+{
+question:
+"Who is Lord Ganesha's father?",
 
-        options: [
-            "Ekadanta",
-            "Lambodara",
-            "Gajamukha",
-            "Vighnaraja"
-        ],
+options:
+[
+"Lord Vishnu",
+"Lord Brahma",
+"Lord Shiva",
+"Lord Indra"
+],
 
-        answer: 0
-    },
-
-
-    {
-        question:
-            "Which flower is commonly offered to Lord Ganesha?",
-
-        options: [
-            "Red hibiscus",
-            "Rose",
-            "Jasmine",
-            "Sunflower"
-        ],
-
-        answer: 0
-    },
+answer: 2
+},
 
 
-    {
-        question:
-            "Which weapon is commonly shown in one of Ganesha's hands?",
+{
+question:
+"Which festival celebrates the birth of Lord Ganesha?",
 
-        options: [
-            "Trident",
-            "Pasha",
-            "Bow",
-            "Sword"
-        ],
+options:
+[
+"Diwali",
+"Holi",
+"Vinayaka Chaturthi",
+"Navaratri"
+],
 
-        answer: 1
-    },
-
-
-    {
-        question:
-            "What does 'Ganapati' broadly refer to?",
-
-        options: [
-            "Lord of the Ganas",
-            "God of the Ocean",
-            "Lord of Fire",
-            "King of Mountains"
-        ],
-
-        answer: 0
-    },
+answer: 2
+},
 
 
-    {
-        question:
-            "Which festival is also called Vinayaka Chaturthi?",
+{
+question:
+"Which animal head does Lord Ganesha have?",
 
-        options: [
-            "Ganesha Chaturthi",
-            "Krishna Janmashtami",
-            "Diwali",
-            "Ugadi"
-        ],
+options:
+[
+"Lion",
+"Elephant",
+"Horse",
+"Bull"
+],
 
-        answer: 0
-    },
-
-
-    {
-        question:
-            "Which part of Ganesha's form is traditionally associated with wisdom?",
-
-        options: [
-            "Elephant head",
-            "Mouse",
-            "Feet",
-            "Crown"
-        ],
-
-        answer: 0
-    },
+answer: 1
+},
 
 
-    {
-        question:
-            "What is a traditional greeting associated with Lord Ganesha?",
+{
+question:
+"What do Ganesha's large ears traditionally remind us to do?",
 
-        options: [
-            "Jai Shri Ram",
-            "Har Har Mahadev",
-            "Ganapati Bappa Morya",
-            "Radhe Radhe"
-        ],
+options:
+[
+"Speak loudly",
+"Listen carefully",
+"Run quickly",
+"Sleep peacefully"
+],
 
-        answer: 2
-    }
+answer: 1
+}
 
 ];
 
 
 let currentQuizQuestion = 0;
+
 let quizScore = 0;
+
 let quizAnswered = false;
 
 
@@ -1157,11 +1000,15 @@ let quizAnswered = false;
 function loadQuiz() {
 
     currentQuizQuestion = 0;
+
     quizScore = 0;
+
     quizAnswered = false;
+
 
     const button =
         document.getElementById("nextQuestion");
+
 
     if (button) {
 
@@ -1170,9 +1017,12 @@ function loadQuiz() {
 
         button.onclick =
             nextQuizQuestion;
+
     }
 
+
     displayQuizQuestion();
+
 }
 
 
@@ -1191,12 +1041,16 @@ function displayQuizQuestion() {
     const resultBox =
         document.getElementById("quizResult");
 
-    if (!questionBox || !optionsBox) return;
+
+    if (!questionBox) return;
+
 
     const question =
         quizQuestions[currentQuizQuestion];
 
+
     quizAnswered = false;
+
 
     questionBox.innerHTML = `
 
@@ -1217,26 +1071,29 @@ function displayQuizQuestion() {
 
     `;
 
+
     optionsBox.innerHTML = "";
 
-    if (resultBox) {
-        resultBox.innerText = "";
-    }
+    resultBox.innerHTML = "";
+
 
     question.options.forEach(
-        function (option, index) {
+        function(option,index) {
 
             const button =
                 document.createElement("button");
 
+
             button.className =
                 "quiz-option";
+
 
             button.innerText =
                 option;
 
+
             button.onclick =
-                function () {
+                function() {
 
                     checkQuizAnswer(
                         index,
@@ -1244,6 +1101,7 @@ function displayQuizQuestion() {
                     );
 
                 };
+
 
             optionsBox.appendChild(button);
 
@@ -1257,52 +1115,53 @@ function displayQuizQuestion() {
    CHECK ANSWER
 ========================================================= */
 
-function checkQuizAnswer(
-    selected,
-    button
-) {
+function checkQuizAnswer(selected,button) {
 
     if (quizAnswered) return;
 
+
     quizAnswered = true;
+
 
     const question =
         quizQuestions[currentQuizQuestion];
 
+
     const result =
         document.getElementById("quizResult");
-
-    const options =
-        document.querySelectorAll(
-            ".quiz-option"
-        );
-
-    options.forEach(function (option) {
-        option.disabled = true;
-    });
 
 
     if (selected === question.answer) {
 
         quizScore++;
 
-        button.classList.add("correct");
 
-        if (result) {
-            result.innerText =
-                "🙏 Correct! Ganapati Bappa Morya!";
-        }
+        button.classList.add(
+            "correct"
+        );
+
+
+        result.innerText =
+            "🙏 Correct! Ganapati Bappa Morya!";
 
     }
 
     else {
 
-        button.classList.add("wrong");
+        button.classList.add(
+            "wrong"
+        );
 
-        if (result) {
-            result.innerText =
-                "Keep learning about Lord Ganesha!";
-        }
+
+        result.innerText =
+            "Keep learning about Lord Ganesha!";
+
+
+        const options =
+            document.querySelectorAll(
+                ".quiz-option"
+            );
+
 
         if (options[question.answer]) {
 
@@ -1325,19 +1184,13 @@ function nextQuizQuestion() {
 
     if (!quizAnswered) {
 
-        const result =
-            document.getElementById(
-                "quizResult"
-            );
-
-        if (result) {
-
-            result.innerText =
-                "Please select an answer first.";
-
-        }
+        document.getElementById(
+            "quizResult"
+        ).innerText =
+            "Please select an answer first.";
 
         return;
+
     }
 
 
@@ -1349,47 +1202,18 @@ function nextQuizQuestion() {
         quizQuestions.length
     ) {
 
-        finishQuiz();
 
-        return;
-    }
-
-
-    displayQuizQuestion();
-
-}
-
-
-/* =========================================================
-   FINISH QUIZ
-========================================================= */
-
-function finishQuiz() {
-
-    const questionBox =
         document.getElementById(
             "quizQuestion"
-        );
-
-    const optionsBox =
-        document.getElementById(
-            "quizOptions"
-        );
-
-    const resultBox =
-        document.getElementById(
-            "quizResult"
-        );
-
-    if (questionBox) {
-
-        questionBox.innerHTML = `
+        ).innerHTML = `
 
             <div class="quiz-question">
 
                 <h2>
                     🎉 Quiz Completed!
                 </h2>
+
+                <br>
 
                 <p>
                     Your Score
@@ -1409,47 +1233,42 @@ function finishQuiz() {
 
         `;
 
-    }
+
+        document.getElementById(
+            "quizOptions"
+        ).innerHTML = "";
 
 
-    if (optionsBox) {
-        optionsBox.innerHTML = "";
-    }
-
-
-    if (resultBox) {
-
-        resultBox.innerText =
+        document.getElementById(
+            "quizResult"
+        ).innerText =
             "Thank you for taking the Ganesha Quiz.";
 
-    }
 
+        const next =
+            document.getElementById(
+                "nextQuestion"
+            );
 
-    const next =
-        document.getElementById(
-            "nextQuestion"
-        );
-
-    if (next) {
 
         next.innerText =
             "Restart Quiz";
 
+
         next.onclick =
-            function () {
+            function() {
 
                 loadQuiz();
 
             };
 
+
+        return;
+
     }
 
 
-    /* Save score locally */
-    localStorage.setItem(
-        "scanGaneshaQuizScore",
-        quizScore
-    );
+    displayQuizQuestion();
 
 }
 
@@ -1457,47 +1276,29 @@ function finishQuiz() {
 /* =========================================================
    QR CODE
 ========================================================= */
-
 function createQRCode() {
-
-    const qr =
-        document.getElementById("qrcode");
+    const qr = document.getElementById("qrcode");
 
     if (!qr) return;
 
     qr.innerHTML = "";
 
     if (typeof QRCode === "undefined") {
-
-        qr.innerHTML =
-            "<p>QR library could not load.</p>";
-
+        qr.innerHTML = "<p>QR library could not load.</p>";
         return;
     }
 
-
     const currentWebsiteURL =
-        window.location.origin +
-        window.location.pathname;
-
+        window.location.origin + window.location.pathname;
 
     new QRCode(qr, {
-
         text: currentWebsiteURL,
-
         width: 240,
-
         height: 240,
-
         colorDark: "#650808",
-
         colorLight: "#ffffff",
-
-        correctLevel:
-            QRCode.CorrectLevel.H
-
+        correctLevel: QRCode.CorrectLevel.H
     });
-
 }
 
 
@@ -1507,54 +1308,42 @@ function createQRCode() {
 
 function copyWebsiteURL() {
 
-    const message =
-        document.getElementById(
-            "copyMessage"
-        );
+    navigator.clipboard
+        .writeText(WEBSITE_URL)
+
+        .then(function() {
+
+            const message =
+                document.getElementById(
+                    "copyMessage"
+                );
 
 
-    if (
-        navigator.clipboard &&
-        navigator.clipboard.writeText
-    ) {
+            if (message) {
 
-        navigator.clipboard
-            .writeText(WEBSITE_URL)
+                message.innerText =
+                    "✓ Website link copied successfully!";
 
-            .then(function () {
+            }
 
-                if (message) {
+        })
 
-                    message.innerText =
-                        "✓ Website link copied successfully!";
+        .catch(function() {
 
-                }
+            const message =
+                document.getElementById(
+                    "copyMessage"
+                );
 
-            })
 
-            .catch(function () {
+            if (message) {
 
-                if (message) {
+                message.innerText =
+                    WEBSITE_URL;
 
-                    message.innerText =
-                        WEBSITE_URL;
+            }
 
-                }
-
-            });
-
-    }
-
-    else {
-
-        if (message) {
-
-            message.innerText =
-                WEBSITE_URL;
-
-        }
-
-    }
+        });
 
 }
 
@@ -1578,6 +1367,7 @@ function createFloatingPetals() {
         const petal =
             document.createElement("div");
 
+
         petal.innerText =
             symbols[
                 Math.floor(
@@ -1590,29 +1380,36 @@ function createFloatingPetals() {
         petal.style.position =
             "fixed";
 
+
         petal.style.left =
             Math.random() * 100 + "%";
+
 
         petal.style.top =
             Math.random() * 100 + "%";
 
+
         petal.style.fontSize =
-            (10 + Math.random() * 15) +
-            "px";
+            (10 + Math.random() * 15) + "px";
+
 
         petal.style.opacity =
-            0.15 + Math.random() * 0.35;
+            0.15 + Math.random() * .35;
+
 
         petal.style.pointerEvents =
             "none";
 
+
         petal.style.zIndex =
             "999";
+
 
         petal.style.animation =
             `petalFloat ${
                 8 + Math.random() * 8
             }s ease-in-out infinite`;
+
 
         petal.style.animationDelay =
             Math.random() * 5 + "s";
@@ -1640,28 +1437,22 @@ petalStyle.innerHTML = `
 @keyframes petalFloat {
 
     0% {
-
         transform:
             translateY(0)
             rotate(0deg);
-
     }
 
     50% {
-
         transform:
             translateY(-35px)
             translateX(20px)
             rotate(15deg);
-
     }
 
     100% {
-
         transform:
             translateY(0)
             rotate(0deg);
-
     }
 
 }
@@ -1675,57 +1466,12 @@ document.head.appendChild(
 
 
 /* =========================================================
-   KEYBOARD SUPPORT FOR GALLERY
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        const modal =
-            document.getElementById(
-                "galleryModal"
-            );
-
-        if (
-            !modal ||
-            !modal.classList.contains("show")
-        ) {
-            return;
-        }
-
-
-        if (event.key === "ArrowLeft") {
-
-            changeGallery(-1);
-
-        }
-
-
-        if (event.key === "ArrowRight") {
-
-            changeGallery(1);
-
-        }
-
-
-        if (event.key === "Escape") {
-
-            closeGallery();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
    INITIALIZE WEBSITE
 ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    function() {
 
         loadStories();
 
