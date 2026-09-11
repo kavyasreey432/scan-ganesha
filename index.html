@@ -19,32 +19,53 @@
      THIS IS THE FIRST PAGE ANYONE SEES AFTER QR SCAN
 ===================================================== -->
 
+<!-- =====================================================
+     BALA GANESHA HI PAGE
+===================================================== -->
 
-<section id="frontPage" class="page active intro-page">
+<section id="balaHiPage" class="page active bala-hi-page">
 
-    <div class="intro-glow"></div>
+    <div class="bala-hi-container">
 
-    <div class="ganesha-intro">
+        <div class="bala-om">ॐ</div>
 
-        <div class="om-symbol">ॐ</div>
+        <div class="bala-video-wrapper">
 
-        <img
-            src="images/ganesha.png"
-            alt="Lord Ganesha"
-            class="intro-ganesha"
-        >
+            <video
+                id="balaGaneshaVideo"
+                class="bala-ganesha-video"
+                autoplay
+                muted
+                playsinline
+                preload="auto"
+            >
+                <source
+                    src="video/bala-ganesha-hi.mp4"
+                    type="video/mp4"
+                >
 
-        <div class="hello-bubble">
-            <span>🙏</span>
-            <strong>Hello!</strong>
+                Your browser does not support video playback.
+            </video>
+
         </div>
 
-        <p class="intro-message">
-            A divine blessing awaits you...
+        <div class="hi-bubble">
+            👋 <strong>Hi!</strong>
+        </div>
+
+        <h1 class="bala-title">
+            🙏 Hi! I'm Bala Ganesha
+        </h1>
+
+        <p class="bala-message">
+            Welcome to the divine celebration! 🐘✨
         </p>
 
-        <button id="startDivineBtn" class="gold-btn">
-            ✨ Tap to Begin ✨
+        <button
+            class="gold-btn"
+            onclick="showPage('wishPage')"
+        >
+            ✨ Continue ✨
         </button>
 
     </div>
