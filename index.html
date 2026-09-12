@@ -1,41 +1,71 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Scan Ganesha - Digital Ganesh Utsav</title>
+    <meta
+        name="description"
+        content="Scan Ganesha - A Divine Digital Experience"
+    >
+
+    <title>Scan Ganesha | Divine Experience</title>
 
     <link rel="stylesheet" href="style.css">
 
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+
+    <!-- QR Code -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJpRHhKQtCqLUNbK_gEpTz0OxvVnc0_sk",
+            authDomain: "scan-ganesha-65a82.firebaseapp.com",
+            projectId: "scan-ganesha-65a82",
+            storageBucket: "scan-ganesha-65a82.firebasestorage.app",
+            messagingSenderId: "470076654989",
+            appId: "1:470076654989:web:4cd47d0105fdc8a63c69c4"
+        };
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+
+            window.firebaseAuth = firebase.auth();
+            window.firebaseDB = firebase.firestore();
+            window.firebaseReady = true;
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+            window.firebaseReady = false;
+            window.firebaseAuth = null;
+            window.firebaseDB = null;
+        }
+    </script>
 </head>
 
 <body>
 
-<!-- =====================================================
-     WELCOME PAGE
-     THIS IS THE FIRST PAGE ANYONE SEES AFTER QR SCAN
-===================================================== -->
+<div id="floatingPetals" aria-hidden="true"></div>
 
-<!-- =====================================================
-     BALA GANESHA HI PAGE
-===================================================== -->
+<!-- =========================================================
+     1. BAL GANESHA
+========================================================= -->
+<section id="frontPage" class="page active">
+    <div class="balagana-page">
 
-<section id="balaHiPage" class="page active bala-hi-page">
+        <div class="balagana-om">ॐ</div>
 
-    <div class="bala-hi-container">
-
-        <div class="bala-om">ॐ</div>
-
-        <div class="bala-video-wrapper">
-
+        <div class="balagana-video-wrapper">
             <video
-                id="balaGaneshaVideo"
-                class="bala-ganesha-video"
+                id="balaganaIntroVideo"
+                class="balagana-video"
                 autoplay
                 muted
+                loop
                 playsinline
                 preload="auto"
             >
@@ -43,98 +73,151 @@
                     src="video/bala-ganesha-hi.mp4"
                     type="video/mp4"
                 >
-
-                Your browser does not support video playback.
+                Your browser does not support video.
             </video>
-
         </div>
 
-        <div class="hi-bubble">
-            👋 <strong>Hi!</strong>
+        <div class="balagana-hello">
+            Hello! 🙏
         </div>
 
-        <h1 class="bala-title">
-            🙏 Hi! I'm Bala Ganesha
+        <h1 class="balagana-title">
+            A divine blessing awaits you...
         </h1>
 
-        <p class="bala-message">
-            Welcome to the divine celebration! 🐘✨
+        <p class="balagana-description">
+            Scan Ganesha and enter a beautiful digital
+            journey filled with devotion, wisdom and
+            blessings.
         </p>
 
         <button
-            class="gold-btn"
-            onclick="showPage('wishPage')"
+            type="button"
+            class="gold-btn balagana-start-btn"
+            onclick="showPage('loginPage')"
         >
             ✨ Continue ✨
         </button>
 
-    </div>
-
-</section>
-<section id="wishPage" class="page wish-page">
-
-    <div class="wish-particles"></div>
-
-    <div class="wish-content">
-
-        <div class="wish-om">ॐ</div>
-
-        <p class="wish-small">🙏 WITH DIVINE BLESSINGS 🙏</p>
-
-        <img
-            src="images/ganesha.png"
-            alt="Lord Ganesha"
-            class="wish-ganesha"
-        >
-
-        <h1>
-            Happy Vinayaka<br>
-            <span>Chaturthi</span>
-        </h1>
-
-        <h2>To You & Your Family ❤️</h2>
-
-        <p class="wish-text">
-            May Lord Ganesha bless you and your family
-            with wisdom, happiness, prosperity,
-            good health and success.
+        <p class="balagana-morya">
+            🙏 Ganapati Bappa Morya 🙏
         </p>
 
-        <div class="bappa">
-            🪔 Ganapati Bappa Morya 🪔
-        </div>
-
-        <button onclick="showPage('homePage')" class="gold-btn">
-            ✨ Enter Divine Experience ✨
-        </button>
-
     </div>
-
 </section>
 
-<!-- =====================================================
-     HOME PAGE
-===================================================== -->
+<!-- =========================================================
+     2. PARTICIPANT NAME
+========================================================= -->
+<section id="loginPage" class="page">
+    <div class="login-page">
 
-<section id="homePage" class="page">
+        <div class="login-card">
 
-    <header class="navbar">
+            <div class="login-om">ॐ</div>
 
-        <div class="brand">
+            <h1>
+                Welcome to Scan Ganesha
+            </h1>
 
-            <div class="brand-symbol">
-                ॐ
-            </div>
+            <p>
+                Please enter your name to begin
+                your divine journey.
+            </p>
 
-            <div>
-                <h2>SCAN GANESHA</h2>
-                <p>Digital Ganesh Utsav</p>
-            </div>
+            <form id="participantForm">
+
+                <label for="participantName">
+                    Your Name
+                </label>
+
+                <input
+                    type="text"
+                    id="participantName"
+                    name="participantName"
+                    placeholder="Enter your name"
+                    maxlength="60"
+                    autocomplete="name"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="gold-btn"
+                >
+                    Continue ✨
+                </button>
+
+            </form>
 
         </div>
 
+    </div>
+</section>
 
-        <nav>
+<!-- =========================================================
+     3. DIVINE ENTRY
+========================================================= -->
+<section id="wishPage" class="page">
+    <div class="wish-page">
+
+        <div class="wish-card">
+
+            <div class="wish-symbol">ॐ</div>
+
+            <p class="eyebrow">
+                DIVINE ENTRY
+            </p>
+
+            <h1>
+                Enter the Divine Experience
+            </h1>
+
+            <p>
+                May Lord Ganesha remove every obstacle
+                from your path and bless you with
+                wisdom, happiness and success.
+            </p>
+
+            <div class="wish-name">
+                🙏 <span id="wishUserName">Devotee</span> 🙏
+            </div>
+
+            <button
+                type="button"
+                class="gold-btn"
+                onclick="showPage('homePage')"
+            >
+                Enter Home ✨
+            </button>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- =========================================================
+     4. HOME
+========================================================= -->
+<section id="homePage" class="page">
+
+    <header class="site-header">
+
+        <div class="brand">
+            <span class="brand-symbol">ॐ</span>
+            <span>Scan Ganesha</span>
+        </div>
+
+        <button
+            id="menuToggle"
+            class="menu-toggle"
+            type="button"
+            aria-label="Open menu"
+        >
+            ☰
+        </button>
+
+        <nav id="mainNav">
 
             <button onclick="showPage('aboutPage')">
                 About
@@ -149,15 +232,19 @@
             </button>
 
             <button onclick="showPage('galleryPage')">
-                Gallery
+                Glimpses
             </button>
 
             <button onclick="showPage('musicPage')">
                 Music
             </button>
 
-            <button onclick="showPage('quizPage')">
-                Quiz
+            <button onclick="showPage('gamesPage')">
+                🧩 Puzzle
+            </button>
+
+            <button onclick="showPage('leaderboardPage')">
+                🏆 Leaderboard
             </button>
 
             <button onclick="showPage('ecoPage')">
@@ -168,1059 +255,1271 @@
                 Ganesha & CS
             </button>
 
-            <button
-                class="nav-special"
-                onclick="showPage('qrPage')"
-            >
+            <button onclick="showPage('qrPage')">
                 Scan & Wish
+            </button>
+
+            <button onclick="showPage('finalPage')">
+                Final Blessing
             </button>
 
         </nav>
 
     </header>
 
+    <main>
 
-    <!-- HERO -->
+        <section class="hero">
 
-    <div class="hero">
+            <div class="hero-text">
 
-        <div class="hero-text">
+                <p class="eyebrow">
+                    🙏 WELCOME TO YOUR DIVINE JOURNEY
+                </p>
 
-            <p class="hero-sanskrit">
-                ॥ श्री गणेशाय नमः ॥
-            </p>
+                <h1>
+                    Ganapati Bappa Morya
+                </h1>
 
-            <h1>Lord Ganesha</h1>
-
-            <h2>
-                The Remover of Obstacles
-            </h2>
-
-            <h3>
-                The Giver of Wisdom<br>
-                The Lord of New Beginnings
-            </h3>
-
-            <button
-                class="gold-button"
-                onclick="showPage('aboutPage')"
-            >
-                Discover Ganesha
-            </button>
-
-        </div>
-
-
-        <div class="hero-image-box">
-
-            <img
-                src="images/ganesha.png"
-                alt="Lord Ganesha"
-                class="hero-image"
-            >
-
-        </div>
-
-    </div>
-
-
-    <!-- FEATURES -->
-
-    <div class="feature-section">
-
-        <h1>Explore the Divine Experience</h1>
-
-        <p>
-            Discover the stories, mantras, music, wisdom and
-            beauty associated with Lord Ganesha.
-        </p>
-
-
-        <div class="feature-grid">
-
-
-            <div
-                class="feature-card"
-                onclick="showPage('aboutPage')"
-            >
-
-                <div class="feature-icon">🐘</div>
-
-                <h2>About Ganesha</h2>
+                <h2>
+                    Welcome,
+                    <span id="homeUserName">
+                        Devotee
+                    </span>
+                    🌺
+                </h2>
 
                 <p>
-                    Learn about Lord Ganesha,
-                    his birth, symbolism and worship.
+                    Explore stories, mantras, devotional
+                    music, divine glimpses, puzzles,
+                    eco-friendly celebrations and the
+                    beautiful connection between Ganesha
+                    and Computer Science.
                 </p>
+
+                <button
+                    class="gold-btn"
+                    onclick="showPage('aboutPage')"
+                >
+                    Begin Your Journey →
+                </button>
 
             </div>
 
+            <div class="hero-image">
+                <img
+                    src="images/ganesha.png"
+                    alt="Lord Ganesha"
+                >
+            </div>
 
-            <div
-                class="feature-card"
-                onclick="showPage('storiesPage')"
-            >
+        </section>
 
-                <div class="feature-icon">📖</div>
+        <section class="features-section">
 
-                <h2>Divine Stories</h2>
+            <div class="section-title">
+                <p>EXPLORE</p>
+                <h2>Your Divine Experience</h2>
+            </div>
 
-                <p>
-                    Read inspiring stories of Lord Ganesha.
-                </p>
+            <div class="feature-grid">
+
+                <button
+                    class="feature-card"
+                    onclick="showPage('aboutPage')"
+                >
+                    <div class="feature-icon">🐘</div>
+                    <h2>About Ganesha</h2>
+                    <p>
+                        Discover the meaning behind
+                        Lord Ganesha's divine form.
+                    </p>
+                </button>
+
+                <button
+                    class="feature-card"
+                    onclick="showPage('storiesPage')"
+                >
+                    <div class="feature-icon">📖</div>
+                    <h2>Stories</h2>
+                    <p>
+                        Read beautiful traditional
+                        stories of Lord Ganesha.
+                    </p>
+                </button>
+
+                <button
+                    class="feature-card"
+                    onclick="showPage('mantraPage')"
+                >
+                    <div class="feature-icon">🕉️</div>
+                    <h2>Mantras & Shlokas</h2>
+                    <p>
+                        Chant sacred mantras and
+                        listen to them.
+                    </p>
+                </button>
+
+                <button
+                    class="feature-card"
+                    onclick="showPage('galleryPage')"
+                >
+                    <div class="feature-icon">🖼️</div>
+                    <h2>Glimpses</h2>
+                    <p>
+                        Explore beautiful Ganesha images.
+                    </p>
+                </button>
+
+                <button
+                    class="feature-card"
+                    onclick="showPage('musicPage')"
+                >
+                    <div class="feature-icon">🎵</div>
+                    <h2>Music</h2>
+                    <p>
+                        Listen to devotional Ganesha songs.
+                    </p>
+                </button>
+
+                <button
+                    class="feature-card"
+                    onclick="showPage('gamesPage')"
+                >
+                    <div class="feature-icon">🧩</div>
+                    <h2>Ganesha Puzzle</h2>
+                    <p>
+                        Complete your personalized
+                        Ganesha image puzzle.
+                    </p>
+                </button>
+
+                <button
+                    class="feature-card"
+                    onclick="showPage('leaderboardPage')"
+                >
+                    <div class="feature-icon">🏆</div>
+                    <h2>Leaderboard</h2>
+                    <p>
+                        See the top Ganesha puzzle champions.
+                    </p>
+                </button>
+
+                <button
+                    class="feature-card"
+                    onclick="showPage('ecoPage')"
+                >
+                    <div class="feature-icon">🌱</div>
+                    <h2>Eco-Friendly</h2>
+                    <p>
+                        Celebrate Vinayaka Chaturthi
+                        responsibly.
+                    </p>
+                </button>
+
+                <button
+                    class="feature-card"
+                    onclick="showPage('csPage')"
+                >
+                    <div class="feature-icon">💻</div>
+                    <h2>Ganesha & Computer Science</h2>
+                    <p>
+                        Discover connections between
+                        wisdom and technology.
+                    </p>
+                </button>
+
+                <button
+                    class="feature-card"
+                    onclick="showPage('qrPage')"
+                >
+                    <div class="feature-icon">📱</div>
+                    <h2>Scan & Wish</h2>
+                    <p>
+                        Share the Scan Ganesha
+                        experience with others.
+                    </p>
+                </button>
+
+                <button
+                    class="feature-card"
+                    onclick="showPage('finalPage')"
+                >
+                    <div class="feature-icon">🙏</div>
+                    <h2>Final Blessing</h2>
+                    <p>
+                        Offer your final wish to Lord Ganesha.
+                    </p>
+                </button>
 
             </div>
 
+        </section>
 
-            <div
-                class="feature-card"
-                onclick="showPage('mantraPage')"
-            >
+        <section class="journey-section">
 
-                <div class="feature-icon">ॐ</div>
+            <div class="journey-card">
 
-                <h2>Mantras & Shlokas</h2>
+                <h2>🌺 Your Divine Journey</h2>
 
-                <p>
-                    Read sacred Ganesha mantras and shlokas.
+                <p id="journeyText">
+                    0 / 10 experiences explored
                 </p>
+
+                <div class="progress-track">
+                    <div
+                        id="journeyProgress"
+                        class="progress-fill"
+                    ></div>
+                </div>
 
             </div>
 
+        </section>
 
-            <div
-                class="feature-card"
-                onclick="showPage('galleryPage')"
-            >
+    </main>
 
-                <div class="feature-icon">🪷</div>
-
-                <h2>Divine Glimpses</h2>
-
-                <p>
-                    View beautiful Ganesha images.
-                </p>
-
-            </div>
-
-
-            <div
-                class="feature-card"
-                onclick="showPage('musicPage')"
-            >
-
-                <div class="feature-icon">🎵</div>
-
-                <h2>Devotional Music</h2>
-
-                <p>
-                    Listen to your seven devotional songs.
-                </p>
-
-            </div>
-
-
-            <div
-                class="feature-card"
-                onclick="showPage('quizPage')"
-            >
-
-                <div class="feature-icon">❓</div>
-
-                <h2>Festive Quiz</h2>
-
-                <p>
-                    Test your knowledge about Lord Ganesha.
-                </p>
-
-            </div>
-
-
-            <div
-                class="feature-card"
-                onclick="showPage('ecoPage')"
-            >
-
-                <div class="feature-icon">🌱</div>
-
-                <h2>Eco-Friendly Theme</h2>
-
-                <p>
-                    Learn how to celebrate responsibly.
-                </p>
-
-            </div>
-
-
-            <div
-                class="feature-card"
-                onclick="showPage('csPage')"
-            >
-
-                <div class="feature-icon">💻</div>
-
-                <h2>Ganesha & Computer Science</h2>
-
-                <p>
-                    Connect traditional wisdom with technology.
-                </p>
-
-            </div>
-
-
-            <div
-                class="feature-card scan-feature"
-                onclick="showPage('qrPage')"
-            >
-
-                <div class="feature-icon">📱</div>
-
-                <h2>Scan & Wish</h2>
-
-                <p>
-                    Create a QR experience and spread blessings.
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <footer>
-
-        <div class="footer-morya">
-            ॥ Ganapati Bappa Morya ॥
-        </div>
-
-        <p>
-            Scan Ganesha • Digital Ganesh Utsav
-        </p>
-
+    <footer class="site-footer">
+        <p>🙏 Ganapati Bappa Morya 🙏</p>
+        <p>Made with devotion ❤️</p>
     </footer>
 
 </section>
 
-
-<!-- =====================================================
-     ABOUT PAGE
-===================================================== -->
-
+<!-- =========================================================
+     ABOUT
+========================================================= -->
 <section id="aboutPage" class="page inner-page">
 
-    <div class="page-heading">
+    <div class="inner-header">
 
         <button
-            class="back-button"
+            class="back-btn"
             onclick="showPage('homePage')"
         >
-            ← Back to Home
+            ← Home
         </button>
+
+        <p>DIVINE WISDOM</p>
 
         <h1>About Lord Ganesha</h1>
 
-        <p>
-            Story, Form, Symbolism, Worship and Vinayaka Chaturthi
-        </p>
-
     </div>
 
+    <div class="inner-content">
 
-    <div class="about-main">
-
-        <div class="about-image">
-
-            <img
-                src="images/ganesha1.jpg"
-                alt="Lord Ganesha"
-            >
-
-        </div>
-
-
-        <div class="about-introduction">
-
-            <h2>Lord Ganesha</h2>
-
-            <p>
-                Lord Vinayaka, also known as Ganesha or Ganapati,
-                is the widely worshipped elephant-headed deity in
-                Hinduism. He is revered as the lord of wisdom,
-                prosperity, good beginnings and the remover of
-                obstacles.
-            </p>
-
-            <p>
-                Devotees traditionally invoke Lord Ganesha before
-                beginning important activities such as a new
-                venture, journey, examination, ceremony or ritual.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="content-box">
-
-        <h2>Birth and Form</h2>
-
-        <h3>Creation of Vinayaka</h3>
-
-        <p>
-            According to a popular traditional account, Goddess
-            Parvati created Vinayaka from turmeric paste or material
-            from her body while preparing to bathe. She gave him
-            the responsibility of guarding the entrance and instructed
-            him not to allow anyone to enter.
-        </p>
-
-        <h3>The Elephant Head</h3>
-
-        <p>
-            When Lord Shiva returned, Vinayaka followed his mother's
-            command and stopped him from entering. A fierce
-            misunderstanding followed between Shiva and the young
-            guardian, resulting in Shiva severing Vinayaka's head.
-        </p>
-
-        <p>
-            Parvati was deeply distressed. To restore Vinayaka,
-            Shiva placed the head of an elephant upon him and
-            brought him back to life. Ganesha was then honoured
-            as the leader of the Ganas.
-        </p>
-
-    </div>
-
-
-    <div class="content-box">
-
-        <h2>Symbolism of Lord Ganesha</h2>
-
-
-        <div class="symbol-grid">
-
-            <div class="symbol-card">
-
-                <span>👂</span>
-
-                <h3>Large Ears</h3>
-
-                <p>
-                    They remind us to listen carefully,
-                    especially to wisdom and good advice.
-                </p>
-
-            </div>
-
-
-            <div class="symbol-card">
-
-                <span>🐘</span>
-
-                <h3>Elephant Head</h3>
-
-                <p>
-                    The elephant represents wisdom,
-                    strength, intelligence and memory.
-                </p>
-
-            </div>
-
-
-            <div class="symbol-card">
-
-                <span>🦷</span>
-
-                <h3>Single Tusk</h3>
-
-                <p>
-                    The single tusk is traditionally associated
-                    with retaining what is good and overcoming
-                    what is unnecessary.
-                </p>
-
-            </div>
-
-
-            <div class="symbol-card">
-
-                <span>🍚</span>
-
-                <h3>Large Belly</h3>
-
-                <p>
-                    It symbolises the ability to accept and
-                    digest the experiences of life.
-                </p>
-
-            </div>
-
-
-            <div class="symbol-card">
-
-                <span>🐭</span>
-
-                <h3>Mouse Vehicle</h3>
-
-                <p>
-                    The mouse is often associated with desires
-                    and the restless mind. Ganesha riding the
-                    mouse symbolises control over them.
-                </p>
-
-            </div>
-
-
-            <div class="symbol-card">
-
-                <span>🪷</span>
-
-                <h3>Lotus</h3>
-
-                <p>
-                    The lotus represents purity, spiritual growth
-                    and rising above difficulties.
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="content-box">
-
-        <h2>Significance and Worship</h2>
-
-        <h3>Prathama Pujya</h3>
-
-        <p>
-            Lord Ganesha is traditionally worshipped first before
-            many important ceremonies and new beginnings. This
-            practice expresses the wish that obstacles be removed
-            and the activity proceed successfully.
-        </p>
-
-
-        <h3>Ganesha Chaturthi</h3>
-
-        <p>
-            Ganesha Chaturthi, also known as Vinayaka Chaturthi,
-            celebrates the birth of Lord Ganesha. Homes and public
-            spaces are decorated, idols are installed, prayers are
-            offered, devotional music is performed and communities
-            come together in celebration.
-        </p>
-
-
-        <h3>Famous Temples</h3>
-
-        <p>
-            Important Ganesha temples include Kanipakam Vinayaka
-            Temple in Andhra Pradesh and Siddhivinayak Temple in
-            Mumbai, among many other revered shrines.
-        </p>
-
-    </div>
-
-
-    <div class="content-box">
-
-        <h2>Vinayaka Chaturthi</h2>
-
-        <p>
-            Vinayaka Chaturthi is one of the most vibrant and widely
-            celebrated Hindu festivals. It honours Lord Ganesha,
-            who is associated with wisdom, prosperity, auspicious
-            beginnings and the removal of obstacles.
-        </p>
-
-        <p>
-            The celebration traditionally begins on the fourth day
-            of the waxing moon phase in the Hindu lunar month of
-            Bhadrapada and may continue for several days, commonly
-            up to ten days.
-        </p>
-
-    </div>
-
-
-    <div class="content-box">
-
-        <h2>The Four Core Rituals</h2>
-
-
-        <div class="ritual">
-
-            <h3>1. Prana Pratishtha</h3>
-
-            <p>
-                The sacred installation ceremony through which
-                devotees invite the divine presence of Lord Ganesha
-                into the idol through prayers and rituals.
-            </p>
-
-        </div>
-
-
-        <div class="ritual">
-
-            <h3>2. Shodashopachara</h3>
-
-            <p>
-                A traditional sixteen-step form of worship involving
-                various offerings, prayers and devotional practices.
-            </p>
-
-        </div>
-
-
-        <div class="ritual">
-
-            <h3>3. Uttarpuja</h3>
-
-            <p>
-                The farewell prayer performed at the conclusion of
-                the worship period.
-            </p>
-
-        </div>
-
-
-        <div class="ritual">
-
-            <h3>4. Ganpati Visarjan</h3>
-
-            <p>
-                The immersion of the idol symbolises the return of
-                Ganesha and reminds devotees of the cycle of creation,
-                preservation and dissolution.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="content-box">
-
-        <h2>🌺 The Divine Modak</h2>
-
-        <p>
-            Modak is traditionally associated with Lord Ganesha.
-            It is commonly prepared with rice flour, coconut and
-            jaggery.
-        </p>
-
-        <p>
-            The sweet interior is often associated with spiritual
-            knowledge and bliss. It reminds devotees that true
-            sweetness comes from wisdom and inner understanding.
-        </p>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     STORIES PAGE
-===================================================== -->
-
-<section id="storiesPage" class="page inner-page">
-
-    <div class="page-heading">
-
-        <button
-            class="back-button"
-            onclick="showPage('homePage')"
-        >
-            ← Back to Home
-        </button>
-
-        <h1>Divine Stories of Lord Ganesha</h1>
-
-        <p>
-            Read the complete traditional stories and their meanings.
-        </p>
-
-    </div>
-
-
-    <div id="storiesContainer"></div>
-
-</section>
-
-
-<!-- =====================================================
-     MANTRA PAGE
-===================================================== -->
-
-<section id="mantraPage" class="page inner-page">
-
-    <div class="page-heading">
-
-        <button
-            class="back-button"
-            onclick="showPage('homePage')"
-        >
-            ← Back to Home
-        </button>
-
-        <h1>Mantras & Shlokas</h1>
-
-        <p>
-            Sacred verses for prayer and devotion.
-        </p>
-
-    </div>
-
-
-    <div id="mantraContainer"></div>
-
-</section>
-
-
-<!-- =====================================================
-     MUSIC PAGE
-===================================================== -->
-
-<section id="musicPage" class="page inner-page">
-
-    <div class="page-heading">
-
-        <button
-            class="back-button"
-            onclick="showPage('homePage')"
-        >
-            ← Back to Home
-        </button>
-
-        <h1>Devotional Music</h1>
-
-        <p>
-            Listen to the devotional songs of Lord Ganesha.
-        </p>
-
-    </div>
-
-
-    <div class="music-note">
-
-        <h2>🎵 Ganapati Devotional Music</h2>
-
-        <p>
-            Use the controls below to play, pause and adjust
-            the volume.
-        </p>
-
-    </div>
-
-
-    <div id="musicContainer"></div>
-
-</section>
-
-
-<!-- =====================================================
-     GALLERY
-===================================================== -->
-
-<section id="galleryPage" class="page inner-page">
-
-    <div class="page-heading">
-
-        <button
-            class="back-button"
-            onclick="showPage('homePage')"
-        >
-            ← Back to Home
-        </button>
-
-        <h1>Divine Glimpses</h1>
-
-        <p>
-            Beautiful moments of Lord Ganesha.
-        </p>
-
-    </div>
-
-
-    <div id="galleryContainer" class="gallery"></div>
-
-</section>
-
-
-<!-- =====================================================
-     QUIZ
-===================================================== -->
-
-<section id="quizPage" class="page inner-page">
-
-    <div class="page-heading">
-
-        <button
-            class="back-button"
-            onclick="showPage('homePage')"
-        >
-            ← Back to Home
-        </button>
-
-        <h1>Festive Ganesha Quiz</h1>
-
-        <p>
-            Test your knowledge about Lord Ganesha.
-        </p>
-
-    </div>
-
-
-    <div class="quiz-box">
-
-        <div id="quizQuestion"></div>
-
-        <div id="quizOptions"></div>
-
-        <div id="quizResult"></div>
-
-        <button
-            id="nextQuestion"
-            class="gold-button"
-            onclick="nextQuizQuestion()"
-        >
-            Next Question
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     ECO PAGE
-===================================================== -->
-
-<section id="ecoPage" class="page inner-page">
-
-    <div class="page-heading">
-
-        <button
-            class="back-button"
-            onclick="showPage('homePage')"
-        >
-            ← Back to Home
-        </button>
-
-        <h1>Eco-Friendly Vinayaka Chaturthi</h1>
-
-        <p>
-            Celebrate devotion while caring for nature.
-        </p>
-
-    </div>
-
-
-    <div class="eco-grid">
-
-        <div class="eco-card">
-
-            <span>🌱</span>
-
-            <h2>Clay Idols</h2>
-
-            <p>
-                Choose natural clay idols where possible.
-            </p>
-
-        </div>
-
-
-        <div class="eco-card">
-
-            <span>🌸</span>
-
-            <h2>Natural Decorations</h2>
-
-            <p>
-                Use flowers, leaves, cloth and reusable decorations.
-            </p>
-
-        </div>
-
-
-        <div class="eco-card">
-
-            <span>💧</span>
-
-            <h2>Responsible Immersion</h2>
-
-            <p>
-                Use designated immersion facilities where available.
-            </p>
-
-        </div>
-
-
-        <div class="eco-card">
-
-            <span>♻️</span>
-
-            <h2>Reduce Waste</h2>
-
-            <p>
-                Avoid unnecessary plastic and reuse decorations.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     GANESHA & COMPUTER SCIENCE
-===================================================== -->
-
-<section id="csPage" class="page inner-page">
-
-    <div class="page-heading">
-
-        <button
-            class="back-button"
-            onclick="showPage('homePage')"
-        >
-            ← Back to Home
-        </button>
-
-        <h1>Ganesha & Computer Science</h1>
-
-        <p>
-            Connecting traditional wisdom with modern technology.
-        </p>
-
-    </div>
-
-
-    <div class="cs-grid">
-
-        <div class="cs-card">
-
-            <span>🧠</span>
-
-            <h2>Wisdom & Intelligence</h2>
-
-            <p>
-                Ganesha represents wisdom and intelligence.
-                Computer Science also requires logical thinking,
-                reasoning and problem solving.
-            </p>
-
-        </div>
-
-
-        <div class="cs-card">
-
-            <span>🐘</span>
-
-            <h2>Problem Solving</h2>
-
-            <p>
-                Ganesha is traditionally associated with removing
-                obstacles. Programmers similarly solve problems
-                by identifying and removing errors.
-            </p>
-
-        </div>
-
-
-        <div class="cs-card">
-
-            <span>💡</span>
-
-            <h2>Innovation</h2>
-
-            <p>
-                Technology depends on creativity and innovation.
-                Ganesha inspires us to approach challenges with
-                intelligence and imagination.
-            </p>
-
-        </div>
-
-
-        <div class="cs-card">
-
-            <span>🤖</span>
-
-            <h2>Artificial Intelligence</h2>
-
-            <p>
-                Artificial Intelligence uses data, patterns,
-                reasoning and computation to solve problems.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     QR SCAN PAGE
-===================================================== -->
-
-<section id="qrPage" class="page inner-page">
-
-    <div class="page-heading">
-
-        <button
-            class="back-button"
-            onclick="showPage('homePage')"
-        >
-            ← Back to Home
-        </button>
-
-        <h1>Scan to Celebrate</h1>
-
-        <p>
-            Digital Ganesh Utsav • Spread Devotion • Share Blessings
-        </p>
-
-    </div>
-
-
-    <div class="scanner-layout">
-
-
-        <!-- SCANNER CARD -->
-
-        <div class="scanner-card">
-
-            <div class="scanner-title">
-
-                <h1>SCAN TO</h1>
-
-                <h1>CELEBRATE</h1>
-
-                <p>DIGITAL GANESH UTSAV</p>
-
-            </div>
-
-
-            <div class="qr-wrapper">
-
-                <div id="qrcode"></div>
-
-            </div>
-
-
-            <h2 class="scan-label">
-                📱 Scan Me
-            </h2>
-
-
-            <div class="scanner-features">
-
-                <p>📜 Slokas & Aartis</p>
-
-                <p>📖 Stories of Vinayaka</p>
-
-                <p>🌱 Eco-Friendly Theme</p>
-
-                <p>🎉 Festive Quiz!</p>
-
-                <p>🎵 Devotional Music</p>
-
-                <p>🐘 About Lord Ganesha</p>
-
-            </div>
-
-
-            <div class="scanner-footer">
-
-                Ganapati Bappa Morya 🙏
-
-            </div>
-
-        </div>
-
-
-        <!-- WISH CARD -->
-
-        <div class="wish-card">
-
-            <div class="wish-flower">
-                🪷 🌸 🪷
-            </div>
-
-            <h1>
-                Happy Vinayaka Chaturthi
-            </h1>
-
-            <h2>
-                To You & Your Family
-            </h2>
+        <div class="about-hero">
 
             <img
                 src="images/ganesha.png"
                 alt="Lord Ganesha"
             >
 
-            <p>
-                May Lord Ganesha remove all obstacles from your path
-                and fill your life with wisdom, happiness, prosperity,
-                peace and success.
-            </p>
+            <div>
 
-            <div class="wish-divider">
-                ✦ ✦ ✦
+                <h2>
+                    The Remover of Obstacles
+                </h2>
+
+                <p>
+                    Lord Ganesha is one of the most
+                    beloved deities in Hindu tradition.
+                    He is associated with wisdom,
+                    knowledge, new beginnings and the
+                    removal of obstacles.
+                </p>
+
+                <p>
+                    He is traditionally worshipped before
+                    beginning important activities.
+                </p>
+
             </div>
 
-            <h3>
-                Ganapati Bappa Morya!
-            </h3>
+        </div>
+
+        <div class="meaning-grid">
+
+            <div class="meaning-card">
+                <h3>👂 Large Ears</h3>
+                <p>
+                    Listen carefully and learn from
+                    everything around you.
+                </p>
+            </div>
+
+            <div class="meaning-card">
+                <h3>🐘 Elephant Head</h3>
+                <p>
+                    Represents wisdom, intelligence
+                    and understanding.
+                </p>
+            </div>
+
+            <div class="meaning-card">
+                <h3>🍚 Large Belly</h3>
+                <p>
+                    Symbolizes the ability to absorb
+                    experiences.
+                </p>
+            </div>
+
+            <div class="meaning-card">
+                <h3>🐭 Mouse</h3>
+                <p>
+                    Represents control over restless
+                    desires.
+                </p>
+            </div>
+
+            <div class="meaning-card">
+                <h3>🦷 Broken Tusk</h3>
+                <p>
+                    Symbolizes sacrifice, determination
+                    and knowledge.
+                </p>
+            </div>
+
+            <div class="meaning-card">
+                <h3>🌺 Modak</h3>
+                <p>
+                    Represents the sweetness of
+                    spiritual knowledge.
+                </p>
+            </div>
 
         </div>
 
     </div>
 
+</section>
 
-    <div class="qr-instruction">
+<!-- =========================================================
+     STORIES
+========================================================= -->
+<section id="storiesPage" class="page inner-page">
 
-        <h2>How It Works</h2>
-
-        <p>
-            Print or display this QR code.
-            Anyone can scan it using their phone camera.
-        </p>
-
-        <p>
-            The QR code opens the Scan Ganesha website and
-            displays the beautiful Vinayaka Chaturthi greeting first.
-        </p>
+    <div class="inner-header">
 
         <button
-            class="gold-button"
-            onclick="copyWebsiteURL()"
+            class="back-btn"
+            onclick="showPage('homePage')"
         >
-            Copy Website Link
+            ← Home
         </button>
 
-        <p id="copyMessage"></p>
+        <p>DIVINE STORIES</p>
+
+        <h1>Stories of Lord Ganesha</h1>
+
+    </div>
+
+    <div class="inner-content">
+
+        <div id="storiesContainer"></div>
+
+        <div class="story-controls">
+
+            <button
+                id="storyPrev"
+                class="outline-btn"
+                onclick="previousStory()"
+            >
+                ← Previous
+            </button>
+
+            <div class="story-progress-box">
+
+                <span id="storyProgressText">
+                    Chapter 1 of 9
+                </span>
+
+                <div class="progress-track">
+                    <div
+                        id="storyProgressBar"
+                        class="progress-fill"
+                    ></div>
+                </div>
+
+            </div>
+
+            <button
+                id="storyNext"
+                class="gold-btn"
+                onclick="nextStory()"
+            >
+                Next Chapter →
+            </button>
+
+        </div>
+
+        <p
+            id="storyMiniResult"
+            class="success-message"
+        ></p>
 
     </div>
 
 </section>
 
+<!-- =========================================================
+     MANTRAS
+========================================================= -->
+<section id="mantraPage" class="page inner-page">
 
-<script src="script.js?v=2"></script>
+    <div class="inner-header">
+
+        <button
+            class="back-btn"
+            onclick="showPage('homePage')"
+        >
+            ← Home
+        </button>
+
+        <p>SACRED CHANTS</p>
+
+        <h1>Mantras & Shlokas</h1>
+
+    </div>
+
+    <div class="inner-content">
+
+        <div class="chant-counter-card">
+
+            <h2>🕉️ Chant Counter</h2>
+
+            <div
+                id="chantCount"
+                class="chant-number"
+            >
+                0
+            </div>
+
+            <p>Your goal: 108 chants</p>
+
+            <div class="progress-track">
+                <div
+                    id="chantProgress"
+                    class="progress-fill"
+                ></div>
+            </div>
+
+            <div class="chant-buttons">
+
+                <button
+                    class="gold-btn"
+                    onclick="addChant()"
+                >
+                    🕉️ I Chanted
+                </button>
+
+                <button
+                    class="outline-btn"
+                    onclick="resetChants()"
+                >
+                    Reset
+                </button>
+
+            </div>
+
+            <p
+                id="chantMessage"
+                class="success-message"
+            ></p>
+
+        </div>
+
+        <div
+            id="mantraContainer"
+            class="mantra-grid"
+        ></div>
+
+    </div>
+
+</section>
+
+<!-- =========================================================
+     MUSIC
+========================================================= -->
+<section id="musicPage" class="page inner-page">
+
+    <div class="inner-header">
+
+        <button
+            class="back-btn"
+            onclick="showPage('homePage')"
+        >
+            ← Home
+        </button>
+
+        <p>DEVOTIONAL MUSIC</p>
+
+        <h1>Ganesha Songs</h1>
+
+    </div>
+
+    <div class="inner-content">
+
+        <div
+            id="musicContainer"
+            class="music-grid"
+        ></div>
+
+    </div>
+
+</section>
+
+<!-- =========================================================
+     GALLERY / GLIMPSES
+========================================================= -->
+<section id="galleryPage" class="page inner-page">
+
+    <div class="inner-header">
+
+        <button
+            class="back-btn"
+            onclick="showPage('homePage')"
+        >
+            ← Home
+        </button>
+
+        <p>DIVINE GLIMPSES</p>
+
+        <h1>Ganesha Gallery</h1>
+
+    </div>
+
+    <div class="inner-content">
+
+        <div
+            id="galleryContainer"
+            class="gallery-grid"
+        ></div>
+
+    </div>
+
+</section>
+
+<div
+    id="galleryModal"
+    class="gallery-modal"
+    aria-hidden="true"
+>
+
+    <button
+        class="modal-close"
+        onclick="closeGallery()"
+        aria-label="Close"
+    >
+        ×
+    </button>
+
+    <button
+        class="gallery-arrow gallery-prev"
+        onclick="changeGallery(-1)"
+        aria-label="Previous image"
+    >
+        ‹
+    </button>
+
+    <div class="gallery-modal-content">
+
+        <img
+            id="galleryModalImage"
+            src=""
+            alt="Ganesha"
+        >
+
+        <h2 id="galleryModalTitle">
+            Divine Ganesha
+        </h2>
+
+        <p id="galleryModalCaption"></p>
+
+        <p id="galleryModalCounter"></p>
+
+    </div>
+
+    <button
+        class="gallery-arrow gallery-next"
+        onclick="changeGallery(1)"
+        aria-label="Next image"
+    >
+        ›
+    </button>
+
+</div>
+
+<!-- =========================================================
+     PUZZLE
+========================================================= -->
+<section id="gamesPage" class="page inner-page">
+
+    <div class="inner-header">
+
+        <button
+            class="back-btn"
+            onclick="showPage('homePage')"
+        >
+            ← Home
+        </button>
+
+        <p>DIVINE CHALLENGE</p>
+
+        <h1>🧩 Ganesha Puzzle</h1>
+
+    </div>
+
+    <div class="inner-content">
+
+        <div
+            id="gameIntro"
+            class="game-intro-card"
+        >
+
+            <div class="big-game-icon">🧩</div>
+
+            <h2>
+                Welcome,
+                <span id="puzzleIntroName">
+                    Devotee
+                </span>
+            </h2>
+
+            <p>
+                Complete your personalized Ganesha
+                image by swapping two pieces at a time.
+            </p>
+
+            <div class="game-rules">
+
+                <div>1️⃣ Click one piece</div>
+                <div>2️⃣ Click another piece</div>
+                <div>3️⃣ They will swap</div>
+                <div>4️⃣ Complete the image</div>
+
+            </div>
+
+            <button
+                id="startPuzzleBtn"
+                type="button"
+                class="gold-btn"
+            >
+                🧩 Start Puzzle
+            </button>
+
+        </div>
+
+        <div
+            id="puzzleArea"
+            class="puzzle-area"
+            hidden
+        >
+
+            <div class="puzzle-top-card">
+
+                <div>
+                    <strong>Player</strong>
+                    <span id="puzzlePlayerName">
+                        Devotee
+                    </span>
+                </div>
+
+                <div>
+                    <strong>Image</strong>
+                    <span id="puzzleImageNumber">
+                        Divine Puzzle
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="puzzle-stats">
+
+                <div class="puzzle-stat">
+                    <span>⏱️ Time</span>
+                    <strong id="puzzleTimer">
+                        00:00
+                    </strong>
+                </div>
+
+                <div class="puzzle-stat">
+                    <span>🔄 Moves</span>
+                    <strong id="puzzleMoves">
+                        0
+                    </strong>
+                </div>
+
+                <div class="puzzle-stat">
+                    <span>🏆 Score</span>
+                    <strong id="puzzleLiveScore">
+                        1000
+                    </strong>
+                </div>
+
+            </div>
+
+            <p
+                id="puzzleHint"
+                class="puzzle-hint"
+            >
+                Select two pieces to swap them.
+            </p>
+
+            <div
+                id="puzzleBoard"
+                class="puzzle-board"
+            ></div>
+
+            <div class="puzzle-actions">
+
+                <button
+                    class="outline-btn"
+                    onclick="restartGaneshaPuzzle()"
+                >
+                    🔄 Restart
+                </button>
+
+            </div>
+
+            <div
+                id="puzzleResult"
+                class="puzzle-result"
+            ></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =========================================================
+     LEADERBOARD
+========================================================= -->
+<section
+    id="leaderboardPage"
+    class="page inner-page"
+>
+
+    <div class="inner-header">
+
+        <button
+            class="back-btn"
+            onclick="showPage('homePage')"
+        >
+            ← Home
+        </button>
+
+        <p>PUZZLE CHAMPIONS</p>
+
+        <h1>🏆 Leaderboard</h1>
+
+    </div>
+
+    <div class="inner-content">
+
+        <div class="leaderboard-top">
+
+            <div class="leaderboard-trophy">
+                🏆
+            </div>
+
+            <h2>
+                Ganesha Puzzle Champions
+            </h2>
+
+            <p>
+                Complete the puzzle and see your
+                score among other devotees.
+            </p>
+
+        </div>
+
+        <div
+            id="puzzleLeaderboardRows"
+            class="leaderboard-list"
+        >
+            <p class="leaderboard-loading">
+                🏆 Loading puzzle champions...
+            </p>
+        </div>
+
+        <div class="leaderboard-actions">
+
+            <button
+                class="gold-btn"
+                onclick="showPage('gamesPage')"
+            >
+                🧩 Play Puzzle
+            </button>
+
+            <button
+                class="outline-btn"
+                onclick="loadPuzzleLeaderboard()"
+            >
+                🔄 Refresh
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =========================================================
+     ECO-FRIENDLY
+========================================================= -->
+<section id="ecoPage" class="page inner-page">
+
+    <div class="inner-header">
+
+        <button
+            class="back-btn"
+            onclick="showPage('homePage')"
+        >
+            ← Home
+        </button>
+
+        <p>CARE FOR MOTHER EARTH</p>
+
+        <h1>🌱 Eco-Friendly Ganesha</h1>
+
+    </div>
+
+    <div class="inner-content">
+
+        <div class="eco-card">
+
+            <h2>
+                Celebrate with Love for Nature
+            </h2>
+
+            <p>
+                Choose sustainable ways to celebrate
+                Vinayaka Chaturthi.
+            </p>
+
+            <div class="eco-checklist">
+
+                <label>
+                    <input
+                        type="checkbox"
+                        data-eco
+                        onchange="updateEcoChallenge()"
+                    >
+                    Use an eco-friendly Ganesha idol
+                </label>
+
+                <label>
+                    <input
+                        type="checkbox"
+                        data-eco
+                        onchange="updateEcoChallenge()"
+                    >
+                    Avoid plastic decorations
+                </label>
+
+                <label>
+                    <input
+                        type="checkbox"
+                        data-eco
+                        onchange="updateEcoChallenge()"
+                    >
+                    Use natural flowers
+                </label>
+
+                <label>
+                    <input
+                        type="checkbox"
+                        data-eco
+                        onchange="updateEcoChallenge()"
+                    >
+                    Reduce food waste
+                </label>
+
+                <label>
+                    <input
+                        type="checkbox"
+                        data-eco
+                        onchange="updateEcoChallenge()"
+                    >
+                    Save electricity
+                </label>
+
+                <label>
+                    <input
+                        type="checkbox"
+                        data-eco
+                        onchange="updateEcoChallenge()"
+                    >
+                    Keep the surroundings clean
+                </label>
+
+            </div>
+
+            <p>
+                <strong>
+                    🌱 Completed:
+                    <span id="ecoCount">0</span>
+                    / 6
+                </strong>
+            </p>
+
+            <div class="progress-track">
+                <div
+                    id="ecoProgress"
+                    class="progress-fill"
+                ></div>
+            </div>
+
+            <div
+                id="ecoBadge"
+                class="eco-badge"
+                hidden
+            >
+                🌍 Eco-Friendly Devotee!
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =========================================================
+     COMPUTER SCIENCE
+========================================================= -->
+<section id="csPage" class="page inner-page">
+
+    <div class="inner-header">
+
+        <button
+            class="back-btn"
+            onclick="showPage('homePage')"
+        >
+            ← Home
+        </button>
+
+        <p>WISDOM MEETS TECHNOLOGY</p>
+
+        <h1>
+            💻 Ganesha & Computer Science
+        </h1>
+
+    </div>
+
+    <div class="inner-content">
+
+        <div class="cs-grid">
+
+            <div class="cs-card">
+
+                <div class="cs-icon">🧠</div>
+
+                <h2>Intelligence</h2>
+
+                <p>
+                    Ganesha represents wisdom and
+                    intelligence. Computer Science
+                    also depends on logical thinking
+                    and problem solving.
+                </p>
+
+                <button
+                    class="outline-btn"
+                    onclick="showCSFact(this)"
+                >
+                    Reveal connection
+                </button>
+
+                <div class="hidden-connection">
+                    Algorithms solve problems step by
+                    step, just as wisdom helps overcome
+                    obstacles.
+                </div>
+
+            </div>
+
+            <div class="cs-card">
+
+                <div class="cs-icon">🔐</div>
+
+                <h2>Elephant Head</h2>
+
+                <p>
+                    The elephant is associated with
+                    memory and intelligence.
+                </p>
+
+                <button
+                    class="outline-btn"
+                    onclick="showCSFact(this)"
+                >
+                    Reveal connection
+                </button>
+
+                <div class="hidden-connection">
+                    Computers store information in
+                    memory so programs can use it later.
+                </div>
+
+            </div>
+
+            <div class="cs-card">
+
+                <div class="cs-icon">🐭</div>
+
+                <h2>Small Mouse</h2>
+
+                <p>
+                    Ganesha's mouse vehicle is often
+                    associated with restless desires.
+                </p>
+
+                <button
+                    class="outline-btn"
+                    onclick="showCSFact(this)"
+                >
+                    Reveal connection
+                </button>
+
+                <div class="hidden-connection">
+                    Small components can perform
+                    important tasks in a large system.
+                </div>
+
+            </div>
+
+            <div class="cs-card">
+
+                <div class="cs-icon">🐘</div>
+
+                <h2>Removing Obstacles</h2>
+
+                <p>
+                    Ganesha is known as Vighnaharta,
+                    the remover of obstacles.
+                </p>
+
+                <button
+                    class="outline-btn"
+                    onclick="showCSFact(this)"
+                >
+                    Reveal connection
+                </button>
+
+                <div class="hidden-connection">
+                    Debugging removes errors and
+                    obstacles from software.
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="debug-card">
+
+            <h2>🐞 Debugging Challenge</h2>
+
+            <p>
+                What should a programmer do first
+                when a program has an unexpected error?
+            </p>
+
+            <div class="debug-options">
+
+                <button
+                    class="outline-btn"
+                    onclick="checkDebugAnswer(this, false)"
+                >
+                    Rewrite everything
+                </button>
+
+                <button
+                    class="outline-btn"
+                    onclick="checkDebugAnswer(this, true)"
+                >
+                    Reproduce and understand the problem
+                </button>
+
+                <button
+                    class="outline-btn"
+                    onclick="checkDebugAnswer(this, false)"
+                >
+                    Ignore the error
+                </button>
+
+            </div>
+
+            <p id="debugResult"></p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =========================================================
+     QR
+========================================================= -->
+<section id="qrPage" class="page inner-page">
+
+    <div class="inner-header">
+
+        <button
+            class="back-btn"
+            onclick="showPage('homePage')"
+        >
+            ← Home
+        </button>
+
+        <p>SHARE THE EXPERIENCE</p>
+
+        <h1>📱 Scan & Wish</h1>
+
+    </div>
+
+    <div class="inner-content">
+
+        <div class="qr-card">
+
+            <h2>Scan Ganesha</h2>
+
+            <p>
+                Anyone can scan this QR code using
+                their phone camera and open the
+                Scan Ganesha website.
+            </p>
+
+            <div
+                id="qrcode"
+                class="qr-code"
+            ></div>
+
+            <p
+                id="websiteURLText"
+                class="website-url"
+            ></p>
+
+            <button
+                class="gold-btn"
+                onclick="copyWebsiteURL()"
+            >
+                📋 Copy Website Link
+            </button>
+
+            <p
+                id="copyMessage"
+                class="success-message"
+            ></p>
+
+            <div class="qr-features">
+
+                <div>🐘 Divine Ganesha Experience</div>
+                <div>📖 Stories & Wisdom</div>
+                <div>🕉️ Mantras & Shlokas</div>
+                <div>🎵 Devotional Music</div>
+                <div>🧩 Ganesha Puzzle</div>
+                <div>🏆 Shared Leaderboard</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =========================================================
+     FINAL BLESSING
+========================================================= -->
+<section id="finalPage" class="page inner-page">
+
+    <div class="inner-header">
+
+        <p>YOUR DIVINE JOURNEY</p>
+
+        <h1>
+            🌺 Ganapati Bappa Morya 🌺
+        </h1>
+
+    </div>
+
+    <div class="inner-content">
+
+        <div class="final-card">
+
+            <img
+                src="images/ganesha.png"
+                alt="Lord Ganesha"
+            >
+
+            <h2>
+                Beautifully completed,
+                <span id="finalUserName">
+                    Devotee
+                </span>
+                🙏
+            </h2>
+
+            <div class="final-stats">
+
+                <div>
+                    <span>🧩 Puzzle Score</span>
+                    <strong id="finalPuzzleScore">
+                        —
+                    </strong>
+                </div>
+
+                <div>
+                    <span>🏆 Puzzle Rank</span>
+                    <strong id="finalPuzzleRank">
+                        —
+                    </strong>
+                </div>
+
+                <div>
+                    <span>🕉️ Chants</span>
+                    <strong id="finalChants">
+                        0
+                    </strong>
+                </div>
+
+            </div>
+
+            <textarea
+                id="finalWish"
+                placeholder="Write your final wish to Lord Ganesha..."
+                rows="5"
+                maxlength="500"
+            ></textarea>
+
+            <button
+                class="gold-btn"
+                onclick="saveFinalWish()"
+            >
+                🙏 Offer My Wish
+            </button>
+
+            <p
+                id="wishSavedMessage"
+                class="success-message"
+            ></p>
+
+            <button
+                class="outline-btn"
+                onclick="showPage('homePage')"
+            >
+                ← Return to Divine Experience
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script src="script.js"></script>
 
 </body>
-
 </html>
