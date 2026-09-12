@@ -2815,9 +2815,6 @@ function restartGaneshaPuzzle() {
 /* ============================================================
    FIREBASE SCORE
 ============================================================ */
-/* ============================================================
-   FIREBASE SCORE
-============================================================ */
 
 async function savePuzzleScore(scoreData) {
 
@@ -2826,8 +2823,9 @@ async function savePuzzleScore(scoreData) {
         const user = await ensureFirebaseUser();
 
         if (!user || !firebaseDB) {
-            console.warn("Firebase unavailable - saving locally.");
-            saveLocalPuzzleScore(scoreData);
+            console.error(
+                "Firebase is unavailable."
+            );
             return;
         }
 
@@ -2838,49 +2836,49 @@ async function savePuzzleScore(scoreData) {
             .substring(0, 30);
 
         const imagePath = String(
-            scoreData.imageId ||
             scoreData.image ||
             "images/ganesha.png"
         );
 
         await firebaseDB
             .collection("puzzleScores")
-            .doc(user.uid)
-            .set(
-                {
-                    uid: user.uid,
+            .add({
 
-                    name: playerName,
+                uid: user.uid,
 
-                    score: Number(scoreData.score || 0),
+                name: playerName,
 
-                    moves: Number(scoreData.moves || 0),
+                score: Number(
+                    scoreData.score || 0
+                ),
 
-                    timeSeconds: Number(
-                        scoreData.timeSeconds || 0
-                    ),
+                moves: Number(
+                    scoreData.moves || 0
+                ),
 
-                    time: String(
-                        scoreData.time || "00:00"
-                    ),
+                timeSeconds: Number(
+                    scoreData.timeSeconds || 0
+                ),
 
-                    imageId: imagePath,
+                time: String(
+                    scoreData.time || "00:00"
+                ),
 
-                    image: imagePath,
+                imageId: imagePath,
 
-                    updatedAt:
-                        firebase.firestore.FieldValue
-                            .serverTimestamp()
-                },
-                {
-                    merge: true
-                }
-            );
+                image: imagePath,
 
-        currentParticipantUID = user.uid;
+                createdAt:
+                    firebase.firestore
+                        .FieldValue
+                        .serverTimestamp()
+            });
+
+        currentParticipantUID =
+            user.uid;
 
         console.log(
-            "✅ Score saved to Firebase"
+            "✅ Score added to global leaderboard"
         );
 
     } catch (error) {
@@ -2889,11 +2887,8 @@ async function savePuzzleScore(scoreData) {
             "❌ Firebase score save error:",
             error
         );
-
-        saveLocalPuzzleScore(scoreData);
     }
 }
-
 
 /* ============================================================
    LOCAL BACKUP
