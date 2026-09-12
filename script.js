@@ -2816,57 +2816,81 @@ function restartGaneshaPuzzle() {
    FIREBASE SCORE
 ============================================================ */
 
+/* ============================================================
+   FIREBASE SCORE
+============================================================ */
+
 async function savePuzzleScore(scoreData) {
 
     try {
 
-        const user = await ensureFirebaseUser();
+        const user =
+            await ensureFirebaseUser();
 
         if (!user || !firebaseDB) {
+
             console.error(
                 "Firebase is unavailable."
             );
+
+            saveLocalPuzzleScore(scoreData);
+
             return;
         }
 
-        const playerName = String(
-            currentParticipantName || "Devotee"
-        )
-            .trim()
-            .substring(0, 30);
+        const playerName =
+            String(
+                currentParticipantName ||
+                "Devotee"
+            )
+                .trim()
+                .substring(0, 30);
 
-        const imagePath = String(
-            scoreData.image ||
-            "images/ganesha.png"
-        );
+        const imagePath =
+            String(
+                scoreData.image ||
+                "images/ganesha.png"
+            );
 
         await firebaseDB
             .collection("puzzleScores")
             .add({
 
-                uid: user.uid,
+                uid:
+                    user.uid,
 
-                name: playerName,
+                name:
+                    playerName,
 
-                score: Number(
-                    scoreData.score || 0
-                ),
+                score:
+                    Number(
+                        scoreData.score ||
+                        0
+                    ),
 
-                moves: Number(
-                    scoreData.moves || 0
-                ),
+                moves:
+                    Number(
+                        scoreData.moves ||
+                        0
+                    ),
 
-                timeSeconds: Number(
-                    scoreData.timeSeconds || 0
-                ),
+                timeSeconds:
+                    Number(
+                        scoreData.timeSeconds ||
+                        0
+                    ),
 
-                time: String(
-                    scoreData.time || "00:00"
-                ),
+                time:
+                    String(
+                        scoreData.time ||
+                        "00:00"
+                    ),
 
-                imageId: imagePath,
+                imageId:
+                    imagePath,
 
-                image: imagePath,
+                image:
+                    imagePath,
 
                 createdAt:
                     firebase.firestore
@@ -2878,7 +2902,7 @@ async function savePuzzleScore(scoreData) {
             user.uid;
 
         console.log(
-            "✅ Score added to global leaderboard"
+            "✅ Puzzle score saved"
         );
 
     } catch (error) {
@@ -2887,8 +2911,13 @@ async function savePuzzleScore(scoreData) {
             "❌ Firebase score save error:",
             error
         );
+
+        saveLocalPuzzleScore(
+            scoreData
+        );
     }
 }
+
 
 /* ============================================================
    LOCAL BACKUP
@@ -2900,36 +2929,46 @@ function saveLocalPuzzleScore(scoreData) {
 
     try {
 
-        scores = JSON.parse(
-            localStorage.getItem(
-                "scanGaneshaPuzzleScores"
-            ) || "[]"
-        );
+        scores =
+            JSON.parse(
+                localStorage.getItem(
+                    "scanGaneshaPuzzleScores"
+                ) || "[]"
+            );
 
     } catch (error) {
 
         scores = [];
     }
 
-    scores.push(scoreData);
+    scores.push(
+        scoreData
+    );
 
     scores.sort(
         (a, b) =>
-            Number(b.score || 0) -
-            Number(a.score || 0)
+            Number(
+                b.score || 0
+            ) -
+            Number(
+                a.score || 0
+            )
     );
 
     localStorage.setItem(
         "scanGaneshaPuzzleScores",
         JSON.stringify(
-            scores.slice(0, 50)
+            scores.slice(
+                0,
+                50
+            )
         )
     );
 }
 
 
 /* ============================================================
-   LEADERBOARD
+   GLOBAL LEADERBOARD
 ============================================================ */
 
 async function loadPuzzleLeaderboard() {
@@ -2945,151 +2984,331 @@ async function loadPuzzleLeaderboard() {
 
     container.innerHTML = `
         <p class="leaderboard-loading">
-            🏆 Loading puzzle champions...
+            🏆 Loading all devotees...
         </p>
     `;
-
-    let firebaseLoaded = false;
 
     try {
 
         const user =
             await ensureFirebaseUser();
 
-        if (user && firebaseDB) {
+        if (!user || !firebaseDB) {
 
-            currentParticipantUID =
-                user.uid;
-
-            const snapshot =
-                await firebaseDB
-                    .collection("puzzleScores")
-                    .orderBy("score", "desc")
-                    .limit(20)
-                    .get();
-
-            const scores = [];
-
-            snapshot.forEach(
-                doc => {
-
-                    const data =
-                        doc.data() || {};
-
-                    scores.push({
-
-                        id: doc.id,
-
-                        uid:
-                            data.uid ||
-                            doc.id,
-
-                        name:
-                            data.name ||
-                            "Devotee",
-
-                        score:
-                            Number(
-                                data.score || 0
-                            ),
-
-                        moves:
-                            Number(
-                                data.moves || 0
-                            ),
-
-                        time:
-                            data.time ||
-                            "00:00",
-
-                        timeSeconds:
-                            Number(
-                                data.timeSeconds || 0
-                            ),
-
-                        imageId:
-                            data.imageId ||
-                            data.image ||
-                            "images/ganesha.png"
-
-                    });
-                }
+            throw new Error(
+                "Firebase is unavailable."
             );
-
-            firebaseLoaded = true;
-
-            renderPuzzleLeaderboard(
-                scores
-            );
-
-            updateFinalRank(
-                scores
-            );
-
-            console.log(
-                "✅ Firebase leaderboard loaded",
-                scores
-            );
-
-            return;
         }
+
+        currentParticipantUID =
+            user.uid;
+
+
+        /* ====================================================
+           GET ALL PARTICIPANTS
+           ==================================================== */
+
+        const participantsSnapshot =
+            await firebaseDB
+                .collection("participants")
+                .get();
+
+
+        /* ====================================================
+           GET ALL PUZZLE SCORES
+           ==================================================== */
+
+        const scoresSnapshot =
+            await firebaseDB
+                .collection("puzzleScores")
+                .get();
+
+
+        /* ====================================================
+           STORE BEST SCORE FOR EACH USER
+           ==================================================== */
+
+        const scoreMap =
+            new Map();
+
+        scoresSnapshot.forEach(
+            doc => {
+
+                const data =
+                    doc.data() || {};
+
+                const uid =
+                    data.uid ||
+                    doc.id;
+
+                const score =
+                    Number(
+                        data.score || 0
+                    );
+
+                const oldScore =
+                    scoreMap.get(uid);
+
+                if (
+                    !oldScore ||
+                    score >
+                        oldScore.score ||
+                    (
+                        score ===
+                            oldScore.score &&
+                        Number(
+                            data.timeSeconds ||
+                            999999
+                        ) <
+                            Number(
+                                oldScore.timeSeconds ||
+                                999999
+                            )
+                    )
+                ) {
+
+                    scoreMap.set(
+                        uid,
+                        {
+                            uid:
+                                uid,
+
+                            name:
+                                data.name ||
+                                "Devotee",
+
+                            score:
+                                score,
+
+                            moves:
+                                Number(
+                                    data.moves ||
+                                    0
+                                ),
+
+                            time:
+                                data.time ||
+                                "00:00",
+
+                            timeSeconds:
+                                Number(
+                                    data.timeSeconds ||
+                                    0
+                                ),
+
+                            imageId:
+                                data.imageId ||
+                                data.image ||
+                                "images/ganesha.png",
+
+                            played:
+                                true
+                        }
+                    );
+                }
+            }
+        );
+
+
+        /* ====================================================
+           BUILD GLOBAL LIST FROM ALL PARTICIPANTS
+           ==================================================== */
+
+        const leaderboard =
+            [];
+
+        participantsSnapshot.forEach(
+            doc => {
+
+                const data =
+                    doc.data() || {};
+
+                const uid =
+                    doc.id;
+
+                const existingScore =
+                    scoreMap.get(uid);
+
+                leaderboard.push({
+
+                    uid:
+                        uid,
+
+                    name:
+                        data.name ||
+                        existingScore?.name ||
+                        "Devotee",
+
+                    score:
+                        existingScore
+                            ? existingScore.score
+                            : 0,
+
+                    moves:
+                        existingScore
+                            ? existingScore.moves
+                            : 0,
+
+                    time:
+                        existingScore
+                            ? existingScore.time
+                            : "Not Played",
+
+                    timeSeconds:
+                        existingScore
+                            ? existingScore.timeSeconds
+                            : 999999,
+
+                    imageId:
+                        existingScore
+                            ? existingScore.imageId
+                            : "images/ganesha.png",
+
+                    played:
+                        Boolean(
+                            existingScore
+                        )
+                });
+            }
+        );
+
+
+        /* ====================================================
+           ADD OLD SCORE USERS THAT MAY NOT HAVE
+           A PARTICIPANT DOCUMENT
+           ==================================================== */
+
+        scoreMap.forEach(
+            (player, uid) => {
+
+                const alreadyExists =
+                    leaderboard.some(
+                        item =>
+                            item.uid === uid
+                    );
+
+                if (
+                    !alreadyExists
+                ) {
+
+                    leaderboard.push(
+                        player
+                    );
+                }
+            }
+        );
+
+
+        /* ====================================================
+           SORT
+           PLAYED USERS FIRST
+           HIGHEST SCORE FIRST
+           ==================================================== */
+
+        leaderboard.sort(
+            (a, b) => {
+
+                // Users who played come first
+                if (
+                    a.played !==
+                    b.played
+                ) {
+
+                    return a.played
+                        ? -1
+                        : 1;
+                }
+
+                // Highest score first
+                if (
+                    b.score !==
+                    a.score
+                ) {
+
+                    return b.score -
+                        a.score;
+                }
+
+                // Better time first
+                if (
+                    a.timeSeconds !==
+                    b.timeSeconds
+                ) {
+
+                    return a.timeSeconds -
+                        b.timeSeconds;
+                }
+
+                // Fewer moves first
+                if (
+                    a.moves !==
+                    b.moves
+                ) {
+
+                    return a.moves -
+                        b.moves;
+                }
+
+                // Finally sort names
+                return String(
+                    a.name
+                ).localeCompare(
+                    String(
+                        b.name
+                    )
+                );
+            }
+        );
+
+
+        renderPuzzleLeaderboard(
+            leaderboard
+        );
+
+        updateFinalRank(
+            leaderboard
+        );
+
+        console.log(
+            "✅ Global leaderboard loaded:",
+            leaderboard
+        );
 
     } catch (error) {
 
         console.error(
-            "❌ Firebase leaderboard error:",
+            "❌ Global leaderboard error:",
             error
         );
-    }
 
+        container.innerHTML = `
+            <div class="leaderboard-empty">
 
-    /* ========================================================
-       LOCAL FALLBACK
-    ======================================================== */
+                <div style="font-size:50px;">
+                    ⚠️
+                </div>
 
-    if (!firebaseLoaded) {
+                <h3>
+                    Unable to load leaderboard
+                </h3>
 
-        let localScores = [];
+                <p>
+                    Please refresh the page.
+                </p>
 
-        try {
-
-            localScores =
-                JSON.parse(
-                    localStorage.getItem(
-                        "scanGaneshaPuzzleScores"
-                    ) || "[]"
-                );
-
-        } catch (error) {
-
-            localScores = [];
-        }
-
-        localScores.sort(
-            (a, b) =>
-                Number(b.score || 0) -
-                Number(a.score || 0)
-        );
-
-        localScores =
-            localScores.slice(0, 20);
-
-        renderPuzzleLeaderboard(
-            localScores
-        );
-
-        updateFinalRank(
-            localScores
-        );
+            </div>
+        `;
     }
 }
 
 
 /* ============================================================
-   RENDER LEADERBOARD
+   RENDER GLOBAL LEADERBOARD
 ============================================================ */
 
-function renderPuzzleLeaderboard(scores) {
+function renderPuzzleLeaderboard(
+    scores
+) {
 
     const container =
         document.getElementById(
@@ -3113,12 +3332,12 @@ function renderPuzzleLeaderboard(scores) {
                 </div>
 
                 <h3>
-                    No Puzzle Scores Yet
+                    No Devotees Yet
                 </h3>
 
                 <p>
-                    Be the first devotee to
-                    complete the Ganesha Puzzle!
+                    Be the first person to
+                    scan and join Scan Ganesha!
                 </p>
 
             </div>
@@ -3127,16 +3346,14 @@ function renderPuzzleLeaderboard(scores) {
         return;
     }
 
-    scores = [...scores].sort(
-        (a, b) =>
-            Number(b.score || 0) -
-            Number(a.score || 0)
-    );
-
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
     scores.forEach(
-        (player, index) => {
+        (
+            player,
+            index
+        ) => {
 
             const row =
                 document.createElement(
@@ -3145,6 +3362,7 @@ function renderPuzzleLeaderboard(scores) {
 
             row.className =
                 "leaderboard-row";
+
 
             const isYou =
                 player.uid &&
@@ -3159,16 +3377,57 @@ function renderPuzzleLeaderboard(scores) {
                 );
             }
 
+
             let rank =
                 `#${index + 1}`;
 
-            if (index === 0) {
-                rank = "🥇";
-            } else if (index === 1) {
-                rank = "🥈";
-            } else if (index === 2) {
-                rank = "🥉";
+            if (
+                index === 0
+            ) {
+
+                rank =
+                    "🥇";
+            } else if (
+                index === 1
+            ) {
+
+                rank =
+                    "🥈";
+            } else if (
+                index === 2
+            ) {
+
+                rank =
+                    "🥉";
             }
+
+
+            const scoreText =
+                player.played
+                    ? Number(
+                        player.score ||
+                        0
+                    )
+                    : "Not Played";
+
+
+            const timeText =
+                player.played
+                    ? (
+                        player.time ||
+                        "00:00"
+                    )
+                    : "—";
+
+
+            const movesText =
+                player.played
+                    ? Number(
+                        player.moves ||
+                        0
+                    )
+                    : "—";
+
 
             row.innerHTML = `
 
@@ -3176,24 +3435,28 @@ function renderPuzzleLeaderboard(scores) {
                     ${rank}
                 </div>
 
+
                 <div class="leaderboard-name">
+
                     ${escapeHTML(
                         player.name ||
                         "Devotee"
                     )}
+
                     ${
                         isYou
                             ? " ⭐"
                             : ""
                     }
+
                 </div>
+
 
                 <div class="leaderboard-image">
 
                     <img
                         src="${escapeHTML(
                             player.imageId ||
-                            player.image ||
                             "images/ganesha.png"
                         )}"
                         alt="Ganesha"
@@ -3204,30 +3467,31 @@ function renderPuzzleLeaderboard(scores) {
 
                 </div>
 
+
                 <div class="leaderboard-score">
-                    ${Number(
-                        player.score || 0
-                    )}
+
+                    ${scoreText}
+
                 </div>
+
 
                 <div class="leaderboard-time">
-                    ⏱️ ${
-                        escapeHTML(
-                            player.time ||
-                            "00:00"
-                        )
-                    }
+
+                    ⏱️ ${escapeHTML(
+                        timeText
+                    )}
+
                 </div>
 
+
                 <div class="leaderboard-moves">
-                    🔄 ${
-                        Number(
-                            player.moves || 0
-                        )
-                    }
+
+                    🔄 ${movesText}
+
                 </div>
 
             `;
+
 
             container.appendChild(
                 row
@@ -3241,7 +3505,9 @@ function renderPuzzleLeaderboard(scores) {
    FINAL RANK
 ============================================================ */
 
-function updateFinalRank(scores) {
+function updateFinalRank(
+    scores
+) {
 
     const element =
         document.getElementById(
@@ -3258,7 +3524,8 @@ function updateFinalRank(scores) {
                 player.uid &&
                 currentParticipantUID &&
                 player.uid ===
-                    currentParticipantUID
+                    currentParticipantUID &&
+                player.played
         );
 
     element.textContent =
@@ -3266,7 +3533,6 @@ function updateFinalRank(scores) {
             ? `#${index + 1}`
             : "—";
 }
-
 
 /* ============================================================
    FINAL PAGE
