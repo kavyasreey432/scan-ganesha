@@ -3744,7 +3744,7 @@ function initializeQR() {
 async function copyWebsiteURL() {
 
     const websiteURL =
-        "https://kavyasree432.github.io/scan-ganesha/";
+        "https://kavyasreey432.github.io/scan-ganesha/";
 
     const message =
         document.getElementById(
