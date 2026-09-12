@@ -2815,123 +2815,123 @@ function restartGaneshaPuzzle() {
 /* ============================================================
    FIREBASE SCORE
 ============================================================ */
+/* ============================================================
+   FIREBASE SCORE
+============================================================ */
 
-async function savePuzzleScore(
-    scoreData
-) {
-
-    let savedToFirebase =
-        false;
+async function savePuzzleScore(scoreData) {
 
     try {
 
-        const user =
-            await ensureFirebaseUser();
+        const user = await ensureFirebaseUser();
 
-        if (
-            user &&
-            firebaseDB
-        ) {
-
-            await firebaseDB
-                .collection(
-                    "puzzleScores"
-                )
-                .add(
-                    {
-                        ...scoreData,
-
-                        uid:
-                            user.uid,
-
-                        name:
-                            currentParticipantName,
-
-                        createdAt:
-                            firebase.firestore
-                                .FieldValue
-                                .serverTimestamp(),
-
-                        updatedAt:
-                            firebase.firestore
-                                .FieldValue
-                                .serverTimestamp()
-                    }
-                );
-
-            savedToFirebase =
-                true;
+        if (!user || !firebaseDB) {
+            console.warn("Firebase unavailable - saving locally.");
+            saveLocalPuzzleScore(scoreData);
+            return;
         }
+
+        const playerName = String(
+            currentParticipantName || "Devotee"
+        )
+            .trim()
+            .substring(0, 30);
+
+        const imagePath = String(
+            scoreData.imageId ||
+            scoreData.image ||
+            "images/ganesha.png"
+        );
+
+        await firebaseDB
+            .collection("puzzleScores")
+            .doc(user.uid)
+            .set(
+                {
+                    uid: user.uid,
+
+                    name: playerName,
+
+                    score: Number(scoreData.score || 0),
+
+                    moves: Number(scoreData.moves || 0),
+
+                    timeSeconds: Number(
+                        scoreData.timeSeconds || 0
+                    ),
+
+                    time: String(
+                        scoreData.time || "00:00"
+                    ),
+
+                    imageId: imagePath,
+
+                    image: imagePath,
+
+                    updatedAt:
+                        firebase.firestore.FieldValue
+                            .serverTimestamp()
+                },
+                {
+                    merge: true
+                }
+            );
+
+        currentParticipantUID = user.uid;
+
+        console.log(
+            "✅ Score saved to Firebase"
+        );
 
     } catch (error) {
 
         console.error(
-            "Firebase score save error:",
+            "❌ Firebase score save error:",
             error
         );
-    }
 
-    if (
-        !savedToFirebase
-    ) {
-
-        saveLocalPuzzleScore(
-            scoreData
-        );
+        saveLocalPuzzleScore(scoreData);
     }
 }
 
-function saveLocalPuzzleScore(
-    scoreData
-) {
+
+/* ============================================================
+   LOCAL BACKUP
+============================================================ */
+
+function saveLocalPuzzleScore(scoreData) {
 
     let scores = [];
 
     try {
 
-        scores =
-            JSON.parse(
-                localStorage.getItem(
-                    "scanGaneshaPuzzleScores"
-                ) ||
-                "[]"
-            );
+        scores = JSON.parse(
+            localStorage.getItem(
+                "scanGaneshaPuzzleScores"
+            ) || "[]"
+        );
 
-    } catch {
+    } catch (error) {
 
-        scores =
-            [];
+        scores = [];
     }
 
-    scores.push(
-        scoreData
-    );
+    scores.push(scoreData);
 
     scores.sort(
-        (
-            a,
-            b
-        ) =>
-            Number(
-                b.score ||
-                0
-            ) -
-            Number(
-                a.score ||
-                0
-            )
+        (a, b) =>
+            Number(b.score || 0) -
+            Number(a.score || 0)
     );
 
     localStorage.setItem(
         "scanGaneshaPuzzleScores",
         JSON.stringify(
-            scores.slice(
-                0,
-                50
-            )
+            scores.slice(0, 50)
         )
     );
 }
+
 
 /* ============================================================
    LEADERBOARD
@@ -2954,117 +2954,147 @@ async function loadPuzzleLeaderboard() {
         </p>
     `;
 
-    let scores =
-        [];
-
-    let firebaseWorked =
-        false;
+    let firebaseLoaded = false;
 
     try {
 
         const user =
             await ensureFirebaseUser();
 
-        if (
-            user &&
-            firebaseDB
-        ) {
+        if (user && firebaseDB) {
+
+            currentParticipantUID =
+                user.uid;
 
             const snapshot =
                 await firebaseDB
-                    .collection(
-                        "puzzleScores"
-                    )
-                    .orderBy(
-                        "score",
-                        "desc"
-                    )
-                    .limit(
-                        20
-                    )
+                    .collection("puzzleScores")
+                    .orderBy("score", "desc")
+                    .limit(20)
                     .get();
+
+            const scores = [];
 
             snapshot.forEach(
                 doc => {
 
-                    scores.push(
-                        {
-                            id:
-                                doc.id,
+                    const data =
+                        doc.data() || {};
 
-                            ...doc.data()
-                        }
-                    );
+                    scores.push({
+
+                        id: doc.id,
+
+                        uid:
+                            data.uid ||
+                            doc.id,
+
+                        name:
+                            data.name ||
+                            "Devotee",
+
+                        score:
+                            Number(
+                                data.score || 0
+                            ),
+
+                        moves:
+                            Number(
+                                data.moves || 0
+                            ),
+
+                        time:
+                            data.time ||
+                            "00:00",
+
+                        timeSeconds:
+                            Number(
+                                data.timeSeconds || 0
+                            ),
+
+                        imageId:
+                            data.imageId ||
+                            data.image ||
+                            "images/ganesha.png"
+
+                    });
                 }
             );
 
-            firebaseWorked =
-                true;
+            firebaseLoaded = true;
+
+            renderPuzzleLeaderboard(
+                scores
+            );
+
+            updateFinalRank(
+                scores
+            );
+
+            console.log(
+                "✅ Firebase leaderboard loaded",
+                scores
+            );
+
+            return;
         }
 
     } catch (error) {
 
         console.error(
-            "Firebase leaderboard error:",
+            "❌ Firebase leaderboard error:",
             error
         );
     }
 
-    if (
-        !firebaseWorked ||
-        scores.length === 0
-    ) {
+
+    /* ========================================================
+       LOCAL FALLBACK
+    ======================================================== */
+
+    if (!firebaseLoaded) {
+
+        let localScores = [];
 
         try {
 
-            scores =
+            localScores =
                 JSON.parse(
                     localStorage.getItem(
                         "scanGaneshaPuzzleScores"
-                    ) ||
-                    "[]"
+                    ) || "[]"
                 );
 
-        } catch {
+        } catch (error) {
 
-            scores =
-                [];
+            localScores = [];
         }
 
-        scores.sort(
-            (
-                a,
-                b
-            ) =>
-                Number(
-                    b.score ||
-                    0
-                ) -
-                Number(
-                    a.score ||
-                    0
-                )
+        localScores.sort(
+            (a, b) =>
+                Number(b.score || 0) -
+                Number(a.score || 0)
         );
 
-        scores =
-            scores.slice(
-                0,
-                20
-            );
+        localScores =
+            localScores.slice(0, 20);
+
+        renderPuzzleLeaderboard(
+            localScores
+        );
+
+        updateFinalRank(
+            localScores
+        );
     }
-
-    renderPuzzleLeaderboard(
-        scores
-    );
-
-    updateFinalRank(
-        scores
-    );
 }
 
-function renderPuzzleLeaderboard(
-    scores
-) {
+
+/* ============================================================
+   RENDER LEADERBOARD
+============================================================ */
+
+function renderPuzzleLeaderboard(scores) {
 
     const container =
         document.getElementById(
@@ -3082,6 +3112,7 @@ function renderPuzzleLeaderboard(
 
         container.innerHTML = `
             <div class="leaderboard-empty">
+
                 <div style="font-size:50px;">
                     🏆
                 </div>
@@ -3094,38 +3125,23 @@ function renderPuzzleLeaderboard(
                     Be the first devotee to
                     complete the Ganesha Puzzle!
                 </p>
+
             </div>
         `;
 
         return;
     }
 
-    scores =
-        [
-            ...scores
-        ].sort(
-            (
-                a,
-                b
-            ) =>
-                Number(
-                    b.score ||
-                    0
-                ) -
-                Number(
-                    a.score ||
-                    0
-                )
-        );
+    scores = [...scores].sort(
+        (a, b) =>
+            Number(b.score || 0) -
+            Number(a.score || 0)
+    );
 
-    container.innerHTML =
-        "";
+    container.innerHTML = "";
 
     scores.forEach(
-        (
-            player,
-            index
-        ) => {
+        (player, index) => {
 
             const row =
                 document.createElement(
@@ -3148,33 +3164,21 @@ function renderPuzzleLeaderboard(
                 );
             }
 
-            let medal =
+            let rank =
                 `#${index + 1}`;
 
-            if (
-                index === 0
-            ) {
-                medal =
-                    "🥇";
-            }
-
-            if (
-                index === 1
-            ) {
-                medal =
-                    "🥈";
-            }
-
-            if (
-                index === 2
-            ) {
-                medal =
-                    "🥉";
+            if (index === 0) {
+                rank = "🥇";
+            } else if (index === 1) {
+                rank = "🥈";
+            } else if (index === 2) {
+                rank = "🥉";
             }
 
             row.innerHTML = `
+
                 <div class="leaderboard-rank">
-                    ${medal}
+                    ${rank}
                 </div>
 
                 <div class="leaderboard-name">
@@ -3190,19 +3194,24 @@ function renderPuzzleLeaderboard(
                 </div>
 
                 <div class="leaderboard-image">
+
                     <img
                         src="${escapeHTML(
+                            player.imageId ||
                             player.image ||
                             "images/ganesha.png"
                         )}"
                         alt="Ganesha"
+                        onerror="
+                            this.src='images/ganesha.png'
+                        "
                     >
+
                 </div>
 
                 <div class="leaderboard-score">
                     ${Number(
-                        player.score ||
-                        0
+                        player.score || 0
                     )}
                 </div>
 
@@ -3218,11 +3227,11 @@ function renderPuzzleLeaderboard(
                 <div class="leaderboard-moves">
                     🔄 ${
                         Number(
-                            player.moves ||
-                            0
+                            player.moves || 0
                         )
                     }
                 </div>
+
             `;
 
             container.appendChild(
@@ -3232,9 +3241,12 @@ function renderPuzzleLeaderboard(
     );
 }
 
-function updateFinalRank(
-    scores
-) {
+
+/* ============================================================
+   FINAL RANK
+============================================================ */
+
+function updateFinalRank(scores) {
 
     const element =
         document.getElementById(
@@ -3259,6 +3271,12 @@ function updateFinalRank(
             ? `#${index + 1}`
             : "—";
 }
+
+
+/* ============================================================
+   FINAL PAGE
+============================================================ */
+
 
 /* ============================================================
    FINAL PAGE
