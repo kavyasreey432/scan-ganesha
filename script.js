@@ -3416,7 +3416,7 @@ function initializeQR() {
     }
 
     const websiteURL =
-        "https://kavyasree432.github.io/scan-ganesha/";
+        "https://kavyasreey432.github.io/scan-ganesha/";
 
     const text =
         document.getElementById(
