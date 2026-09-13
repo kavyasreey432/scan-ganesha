@@ -1226,171 +1226,104 @@ function renderMantras() {
 /* ============================================================
    SPEECH SYNTHESIS
 ============================================================ */
-
 function speakMantra(
     text,
     statusElement,
     button
 ) {
-
-    if (
-        !(
-            "speechSynthesis" in
-            window
-        )
-    ) {
-
+    if (!("speechSynthesis" in window)) {
         if (statusElement) {
-
             statusElement.textContent =
-                "Speech is not supported in this browser.";
+                "⚠️ Speech is not supported in this browser.";
         }
-
         return;
     }
 
     speechSynthesis.cancel();
 
-    const utterance =
-        new SpeechSynthesisUtterance(
-            text
-        );
+    const speakNow = () => {
+        const voices =
+            speechSynthesis.getVoices();
 
-    utterance.rate =
-        0.68;
+        const teluguVoice =
+            voices.find(
+                voice =>
+                    (voice.lang || "")
+                        .toLowerCase()
+                        .startsWith("te")
+            );
 
-    utterance.pitch =
-        1;
+        const utterance =
+            new SpeechSynthesisUtterance(text);
 
-    utterance.volume =
-        1;
+        utterance.lang = "te-IN";
 
-    const chooseVoice =
-        () => {
+        if (teluguVoice) {
+            utterance.voice =
+                teluguVoice;
+        }
 
-            const voices =
-                speechSynthesis
-                    .getVoices();
+        utterance.rate = 0.65;
+        utterance.pitch = 1;
+        utterance.volume = 1;
 
-            let voice =
-                voices.find(
-                    item =>
-                        (
-                            item.lang ||
-                            ""
-                        ).toLowerCase() ===
-                        "te-in"
-                );
-
-            if (!voice) {
-
-                voice =
-                    voices.find(
-                        item =>
-                            (
-                                item.lang ||
-                                ""
-                            ).toLowerCase()
-                                .startsWith(
-                                    "te"
-                                )
-                    );
-            }
-
-            if (!voice) {
-
-                voice =
-                    voices.find(
-                        item =>
-                            item.lang ===
-                            "en-IN"
-                    );
-            }
-
-            if (!voice) {
-
-                voice =
-                    voices.find(
-                        item =>
-                            (
-                                item.lang ||
-                                ""
-                            ).toLowerCase()
-                                .startsWith(
-                                    "en"
-                                )
-                    );
-            }
-
-            if (voice) {
-
-                utterance.voice =
-                    voice;
-            }
-        };
-
-    chooseVoice();
-
-    if (
-        speechSynthesis.onvoiceschanged !==
-        undefined
-    ) {
-
-        speechSynthesis.onvoiceschanged =
-            chooseVoice;
-    }
-
-    utterance.onstart =
-        () => {
-
+        utterance.onstart = () => {
             if (statusElement) {
-
                 statusElement.textContent =
                     "🔊 Playing mantra...";
             }
 
             if (button) {
-
-                button.disabled =
-                    true;
+                button.disabled = true;
             }
         };
 
-    utterance.onend =
-        () => {
-
+        utterance.onend = () => {
             if (statusElement) {
-
                 statusElement.textContent =
                     "🙏 Mantra completed.";
             }
 
             if (button) {
-
-                button.disabled =
-                    false;
+                button.disabled = false;
             }
         };
 
-    utterance.onerror =
-        () => {
+        utterance.onerror = (event) => {
+            console.error(
+                "Speech error:",
+                event
+            );
 
             if (statusElement) {
-
                 statusElement.textContent =
-                    "⚠️ Speech playback could not be started.";
+                    "⚠️ Unable to play the mantra.";
             }
 
             if (button) {
-
-                button.disabled =
-                    false;
+                button.disabled = false;
             }
         };
 
-    speechSynthesis.speak(
-        utterance
-    );
+        speechSynthesis.speak(
+            utterance
+        );
+    };
+
+    const voices =
+        speechSynthesis.getVoices();
+
+    if (voices.length > 0) {
+        speakNow();
+    } else {
+        speechSynthesis.onvoiceschanged =
+            () => {
+                speechSynthesis.onvoiceschanged =
+                    null;
+
+                speakNow();
+            };
+    }
 }
 
 function stopSpeech() {
