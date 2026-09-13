@@ -1097,7 +1097,6 @@ function updateStoryControls() {
 /* ============================================================
    MANTRAS
 ============================================================ */
-
 function renderMantras() {
 
     const container =
@@ -1222,6 +1221,7 @@ function renderMantras() {
         }
     );
 }
+
 
 /* ============================================================
    SPEECH SYNTHESIS
