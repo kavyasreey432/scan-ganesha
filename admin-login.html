@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Scan Ganesha - Admin Login</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Georgia, "Times New Roman", serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #fff3d6,
+                    #ffe4a8
+                );
+
+            color: #4b1717;
+        }
+
+
+        .login-container {
+            width: 90%;
+            max-width: 420px;
+
+            background: white;
+
+            padding: 35px 30px;
+
+            border-radius: 20px;
+
+            text-align: center;
+
+            box-shadow:
+                0 10px 30px
+                rgba(0, 0, 0, 0.18);
+        }
+
+
+        .ganesha-icon {
+            font-size: 65px;
+            margin-bottom: 10px;
+        }
+
+
+        h1 {
+            margin: 0;
+
+            color: #8b0000;
+
+            font-size: 28px;
+        }
+
+
+        .subtitle {
+            margin: 8px 0 28px;
+
+            color: #777;
+
+            font-size: 15px;
+        }
+
+
+        .input-group {
+            text-align: left;
+
+            margin-bottom: 18px;
+        }
+
+
+        label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: bold;
+
+            color: #4b1717;
+        }
+
+
+        input {
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+
+            outline: none;
+        }
+
+
+        input:focus {
+            border-color: #8b0000;
+        }
+
+
+        .login-button {
+            width: 100%;
+
+            border: none;
+
+            padding: 14px;
+
+            margin-top: 8px;
+
+            border-radius: 25px;
+
+            background: #8b0000;
+
+            color: white;
+
+            font-family: Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+
+        .login-button:hover {
+            background: #6f0000;
+        }
+
+
+        .error-message {
+            display: none;
+
+            margin-top: 15px;
+
+            padding: 10px;
+
+            border-radius: 8px;
+
+            background: #ffe5e5;
+
+            color: #b00000;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+
+        @media (max-width: 500px) {
+
+            .login-container {
+                padding: 28px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="login-container">
+
+        <div class="ganesha-icon">
+            🙏
+        </div>
+
+
+        <h1>
+            Scan Ganesha
+        </h1>
+
+
+        <p class="subtitle">
+            Admin Login
+        </p>
+
+
+        <form
+            id="adminLoginForm">
+
+
+            <div class="input-group">
+
+                <label for="adminEmail">
+                    Admin Email
+                </label>
+
+                <input
+                    type="email"
+                    id="adminEmail"
+                    placeholder="Enter admin email"
+                    required>
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label for="adminPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="adminPassword"
+                    placeholder="Enter password"
+                    required>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="login-button">
+
+                🔐 Login
+
+            </button>
+
+
+        </form>
+
+
+        <div
+            id="errorMessage"
+            class="error-message">
+
+            ❌ Invalid email or password.
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        /*
+         * Temporary admin credentials.
+         *
+         * We will move authentication to the
+         * backend before deploying online.
+         */
+
+        const ADMIN_EMAIL =
+            "admin@scanganesha.com";
+
+        const ADMIN_PASSWORD =
+            "Ganesha@123";
+
+
+        document
+            .getElementById("adminLoginForm")
+            .addEventListener(
+                "submit",
+                function (event) {
+
+                    event.preventDefault();
+
+
+                    const email =
+                        document
+                            .getElementById(
+                                "adminEmail"
+                            )
+                            .value
+                            .trim();
+
+
+                    const password =
+                        document
+                            .getElementById(
+                                "adminPassword"
+                            )
+                            .value;
+
+
+                    const errorMessage =
+                        document
+                            .getElementById(
+                                "errorMessage"
+                            );
+
+
+                    if (
+                        email === ADMIN_EMAIL &&
+                        password === ADMIN_PASSWORD
+                    ) {
+
+                        sessionStorage.setItem(
+                            "scanGaneshaAdminLoggedIn",
+                            "true"
+                        );
+
+
+                        window.location.href =
+                            "admin.html";
+
+                    } else {
+
+                        errorMessage.style.display =
+                            "block";
+
+                    }
+
+                }
+            );
+
+    </script>
+
+
+</body>
+
+</html>

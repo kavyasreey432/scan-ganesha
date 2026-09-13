@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Scan Ganesha - Admin</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            background: #fff8e8;
+            color: #4b1717;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .admin-header {
+            background: linear-gradient(
+                135deg,
+                #7b0000,
+                #a71919,
+                #7b0000
+            );
+
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.2);
+        }
+
+
+        .admin-header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+
+        .admin-header p {
+            margin: 8px 0 0;
+            font-size: 16px;
+        }
+
+
+        /* =====================================================
+           MAIN CONTAINER
+        ===================================================== */
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+
+        /* =====================================================
+           TABS
+        ===================================================== */
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+
+        .tab-button {
+            border: none;
+            padding: 13px 30px;
+
+            border-radius: 30px;
+
+            background: #f2bd3d;
+            color: #4b1717;
+
+            font-family: Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size: 17px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition:
+                0.2s ease;
+        }
+
+
+        .tab-button:hover {
+            transform: translateY(-2px);
+        }
+
+
+        .tab-button.active {
+            background: #8b0000;
+            color: white;
+        }
+
+
+        /* =====================================================
+           SECTIONS
+        ===================================================== */
+
+        .section {
+            display: none;
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0, 0, 0, 0.12);
+        }
+
+
+        .section.active {
+            display: block;
+        }
+
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .section-title h2 {
+            margin: 0;
+
+            color: #8b0000;
+
+            font-size: 25px;
+        }
+
+
+        /* =====================================================
+           REFRESH BUTTON
+        ===================================================== */
+
+        .refresh-button {
+            border: none;
+
+            background: #f2bd3d;
+            color: #4b1717;
+
+            padding: 10px 18px;
+
+            border-radius: 20px;
+
+            font-family: Georgia,
+                "Times New Roman",
+                serif;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+
+        .refresh-button:hover {
+            background: #e8ad25;
+        }
+
+
+        /* =====================================================
+           TABLE
+        ===================================================== */
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+
+            min-width: 750px;
+        }
+
+
+        thead th {
+            background: #8b0000;
+            color: white;
+
+            padding: 14px 12px;
+
+            text-align: left;
+
+            font-size: 15px;
+        }
+
+
+        tbody td {
+            padding: 13px 12px;
+
+            border-bottom:
+                1px solid #eeeeee;
+
+            font-size: 15px;
+        }
+
+
+        tbody tr:hover {
+            background: #fff8e8;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status {
+            font-weight: bold;
+        }
+
+
+        .completed {
+            color: #16833a;
+        }
+
+
+        .timeout {
+            color: #d46b00;
+        }
+
+
+        .not-completed {
+            color: #777777;
+        }
+
+
+        /* =====================================================
+           RANK
+        ===================================================== */
+
+        .rank {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           EMPTY / ERROR MESSAGE
+        ===================================================== */
+
+        .message {
+            text-align: center;
+
+            padding: 30px;
+
+            color: #777;
+
+            font-size: 16px;
+        }
+
+
+        .error-message {
+            color: #b00000;
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 600px) {
+
+            .admin-header h1 {
+                font-size: 25px;
+            }
+
+
+            .admin-header p {
+                font-size: 14px;
+            }
+
+
+            .container {
+                width: 96%;
+                margin: 20px auto;
+            }
+
+
+            .section {
+                padding: 15px;
+            }
+
+
+            .section-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+
+            .tabs {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+
+            .tab-button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         HEADER
+    ===================================================== -->
+
+    <header class="admin-header">
+
+        <h1>
+            🙏 Scan Ganesha - Admin
+        </h1>
+
+        <p>
+            Users & Puzzle Leaderboard
+        </p>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ===================================================== -->
+
+    <main class="container">
+
+
+        <!-- =================================================
+             TABS
+        ================================================= -->
+
+        <div class="tabs">
+
+            <button
+                id="usersTab"
+                class="tab-button active"
+                onclick="showSection('usersSection', this)">
+
+                👥 Users
+
+            </button>
+
+
+            <button
+                id="leaderboardTab"
+                class="tab-button"
+                onclick="showSection('leaderboardSection', this)">
+
+                🏆 Leaderboard
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             USERS SECTION
+        ================================================= -->
+
+        <section
+            id="usersSection"
+            class="section active">
+
+
+            <div class="section-title">
+
+                <h2>
+                    👥 All Users
+                </h2>
+
+
+                <button
+                    class="refresh-button"
+                    onclick="loadUsers()">
+
+                    🔄 Refresh
+
+                </button>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                ID
+                            </th>
+
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Score
+                            </th>
+
+                            <th>
+                                Time
+                            </th>
+
+                            <th>
+                                Moves
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Divine Wish
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="usersTableBody">
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="message">
+
+                                Loading users...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             LEADERBOARD SECTION
+        ================================================= -->
+
+        <section
+            id="leaderboardSection"
+            class="section">
+
+
+            <div class="section-title">
+
+                <h2>
+                    🏆 Leaderboard
+                </h2>
+
+
+                <button
+                    class="refresh-button"
+                    onclick="loadLeaderboard()">
+
+                    🔄 Refresh
+
+                </button>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Rank
+                            </th>
+
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Score
+                            </th>
+
+                            <th>
+                                Time
+                            </th>
+
+                            <th>
+                                Moves
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="leaderboardTableBody">
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="message">
+
+                                Loading leaderboard...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <script>
+
+    /* =====================================================
+       ADMIN LOGIN CHECK
+    ===================================================== */
+
+    if (
+        sessionStorage.getItem(
+            "scanGaneshaAdminLoggedIn"
+        ) !== "true"
+    ) {
+
+        window.location.href =
+            "admin-login.html";
+
+    }
+
+
+    /* =====================================================
+       BACKEND URL
+    ===================================================== */
+
+    const API_BASE_URL =
+        "http://localhost:3000";
+
+        
+
+
+        /* =====================================================
+           SHOW SECTION
+        ===================================================== */
+
+        function showSection(
+            sectionId,
+            button
+        ) {
+
+            document
+                .querySelectorAll(".section")
+                .forEach(section => {
+
+                    section.classList.remove(
+                        "active"
+                    );
+
+                });
+
+
+            document
+                .querySelectorAll(".tab-button")
+                .forEach(btn => {
+
+                    btn.classList.remove(
+                        "active"
+                    );
+
+                });
+
+
+            document
+                .getElementById(sectionId)
+                .classList.add(
+                    "active"
+                );
+
+
+            button.classList.add(
+                "active"
+            );
+
+
+            if (
+                sectionId ===
+                "usersSection"
+            ) {
+
+                loadUsers();
+
+            }
+
+
+            if (
+                sectionId ===
+                "leaderboardSection"
+            ) {
+
+                loadLeaderboard();
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           LOAD ALL USERS
+        ===================================================== */
+
+        async function loadUsers() {
+
+            const tbody =
+                document.getElementById(
+                    "usersTableBody"
+                );
+
+
+            tbody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="7"
+                        class="message">
+                        Loading users...
+                    </td>
+                </tr>
+            `;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/users`
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `Server returned ${response.status}`
+                    );
+
+                }
+
+
+                const users =
+                    await response.json();
+
+
+                if (
+                    !Array.isArray(users) ||
+                    users.length === 0
+                ) {
+
+                    tbody.innerHTML = `
+                        <tr>
+                            <td
+                                colspan="7"
+                                class="message">
+                                No users found.
+                            </td>
+                        </tr>
+                    `;
+
+                    return;
+
+                }
+
+
+                tbody.innerHTML =
+                    users
+                        .map(user => {
+
+                            let statusClass =
+                                "not-completed";
+
+
+                            if (
+                                user.status ===
+                                "Completed"
+                            ) {
+
+                                statusClass =
+                                    "completed";
+
+                            }
+
+
+                            if (
+                                user.status ===
+                                "Time Out"
+                            ) {
+
+                                statusClass =
+                                    "timeout";
+
+                            }
+
+
+                            return `
+
+                                <tr>
+
+                                    <td>
+                                        ${user.id}
+                                    </td>
+
+                                    <td>
+                                        ${escapeHtml(
+                                            user.name
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        ${Number(
+                                            user.score || 0
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        ${Number(
+                                            user.time_seconds || 0
+                                        )}
+                                        sec
+                                    </td>
+
+                                    <td>
+                                        ${Number(
+                                            user.moves || 0
+                                        )}
+                                    </td>
+
+                                    <td
+                                        class="status ${statusClass}">
+                                        ${escapeHtml(
+                                            user.status ||
+                                            "Not Completed"
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        ${escapeHtml(
+                                            user.final_wish ||
+                                            "-"
+                                        )}
+                                    </td>
+
+                                </tr>
+
+                            `;
+
+                        })
+                        .join("");
+
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Users loading error:",
+                    error
+                );
+
+
+                tbody.innerHTML = `
+                    <tr>
+                        <td
+                            colspan="7"
+                            class="message error-message">
+
+                            ❌ Unable to load users.
+                            <br>
+                            Make sure the Node.js
+                            server is running.
+
+                        </td>
+                    </tr>
+                `;
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           LOAD LEADERBOARD
+        ===================================================== */
+
+        async function loadLeaderboard() {
+
+            const tbody =
+                document.getElementById(
+                    "leaderboardTableBody"
+                );
+
+
+            tbody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="6"
+                        class="message">
+
+                        Loading leaderboard...
+
+                    </td>
+                </tr>
+            `;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/leaderboard`
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `Server returned ${response.status}`
+                    );
+
+                }
+
+
+                const leaderboard =
+                    await response.json();
+
+
+                if (
+                    !Array.isArray(leaderboard) ||
+                    leaderboard.length === 0
+                ) {
+
+                    tbody.innerHTML = `
+                        <tr>
+                            <td
+                                colspan="6"
+                                class="message">
+
+                                No completed puzzles yet.
+
+                            </td>
+                        </tr>
+                    `;
+
+                    return;
+
+                }
+
+
+                tbody.innerHTML =
+                    leaderboard
+                        .map(
+                            (user, index) => {
+
+                                return `
+
+                                    <tr>
+
+                                        <td class="rank">
+                                            ${index + 1}
+                                        </td>
+
+                                        <td>
+                                            ${escapeHtml(
+                                                user.name
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            ${Number(
+                                                user.score || 0
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            ${Number(
+                                                user.time_seconds || 0
+                                            )}
+                                            sec
+                                        </td>
+
+                                        <td>
+                                            ${Number(
+                                                user.moves || 0
+                                            )}
+                                        </td>
+
+                                        <td
+                                            class="status completed">
+
+                                            ${escapeHtml(
+                                                user.status ||
+                                                "Completed"
+                                            )}
+
+                                        </td>
+
+                                    </tr>
+
+                                `;
+
+                            }
+                        )
+                        .join("");
+
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Leaderboard loading error:",
+                    error
+                );
+
+
+                tbody.innerHTML = `
+                    <tr>
+                        <td
+                            colspan="6"
+                            class="message error-message">
+
+                            ❌ Unable to load leaderboard.
+                            <br>
+                            Make sure the Node.js
+                            server is running.
+
+                        </td>
+                    </tr>
+                `;
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           ESCAPE HTML
+        ===================================================== */
+
+        function escapeHtml(value) {
+
+            return String(value)
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+
+        /* =====================================================
+           INITIAL LOAD
+        ===================================================== */
+
+        loadUsers();
+
+    </script>
+
+
+</body>
+
+</html>
