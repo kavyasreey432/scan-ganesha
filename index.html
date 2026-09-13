@@ -14,37 +14,12 @@
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+    
 
     <!-- QR Code -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDJpRHhKQtCqLUNbK_gEpTz0OxvVnc0_sk",
-            authDomain: "scan-ganesha-65a82.firebaseapp.com",
-            projectId: "scan-ganesha-65a82",
-            storageBucket: "scan-ganesha-65a82.firebasestorage.app",
-            messagingSenderId: "470076654989",
-            appId: "1:470076654989:web:4cd47d0105fdc8a63c69c4"
-        };
-
-        try {
-            firebase.initializeApp(firebaseConfig);
-
-            window.firebaseAuth = firebase.auth();
-            window.firebaseDB = firebase.firestore();
-            window.firebaseReady = true;
-        } catch (error) {
-            console.error("Firebase initialization error:", error);
-            window.firebaseReady = false;
-            window.firebaseAuth = null;
-            window.firebaseDB = null;
-        }
-    </script>
+    
 </head>
 
 <body>
@@ -243,9 +218,7 @@
                 🧩 Puzzle
             </button>
 
-            <button onclick="showPage('leaderboardPage')">
-                🏆 Leaderboard
-            </button>
+            
 
             <button onclick="showPage('ecoPage')">
                 Eco-Friendly
@@ -394,17 +367,7 @@
                     </p>
                 </button>
 
-                <button
-                    class="feature-card"
-                    onclick="showPage('leaderboardPage')"
-                >
-                    <div class="feature-icon">🏆</div>
-                    <h2>Leaderboard</h2>
-                    <p>
-                        See the top Ganesha puzzle champions.
-                    </p>
-                </button>
-
+                
                 <button
                     class="feature-card"
                     onclick="showPage('ecoPage')"
@@ -973,13 +936,7 @@
 
             <div class="puzzle-actions">
 
-                <button
-                    class="outline-btn"
-                    onclick="restartGaneshaPuzzle()"
-                >
-                    🔄 Restart
-                </button>
-
+                
             </div>
 
             <div
@@ -994,77 +951,8 @@
 </section>
 
 <!-- =========================================================
-     LEADERBOARD
+
 ========================================================= -->
-<section
-    id="leaderboardPage"
-    class="page inner-page"
->
-
-    <div class="inner-header">
-
-        <button
-            class="back-btn"
-            onclick="showPage('homePage')"
-        >
-            ← Home
-        </button>
-
-        <p>PUZZLE CHAMPIONS</p>
-
-        <h1>🏆 Leaderboard</h1>
-
-    </div>
-
-    <div class="inner-content">
-
-        <div class="leaderboard-top">
-
-            <div class="leaderboard-trophy">
-                🏆
-            </div>
-
-            <h2>
-                Ganesha Puzzle Champions
-            </h2>
-
-            <p>
-                Complete the puzzle and see your
-                score among other devotees.
-            </p>
-
-        </div>
-
-        <div
-            id="puzzleLeaderboardRows"
-            class="leaderboard-list"
-        >
-            <p class="leaderboard-loading">
-                🏆 Loading puzzle champions...
-            </p>
-        </div>
-
-        <div class="leaderboard-actions">
-
-            <button
-                class="gold-btn"
-                onclick="showPage('gamesPage')"
-            >
-                🧩 Play Puzzle
-            </button>
-
-            <button
-                class="outline-btn"
-                onclick="loadPuzzleLeaderboard()"
-            >
-                🔄 Refresh
-            </button>
-
-        </div>
-
-    </div>
-
-</section>
 
 <!-- =========================================================
      ECO-FRIENDLY
@@ -1420,7 +1308,7 @@
                 <div>🕉️ Mantras & Shlokas</div>
                 <div>🎵 Devotional Music</div>
                 <div>🧩 Ganesha Puzzle</div>
-                <div>🏆 Shared Leaderboard</div>
+                
 
             </div>
 
@@ -1471,12 +1359,7 @@
                     </strong>
                 </div>
 
-                <div>
-                    <span>🏆 Puzzle Rank</span>
-                    <strong id="finalPuzzleRank">
-                        —
-                    </strong>
-                </div>
+                
 
                 <div>
                     <span>🕉️ Chants</span>
@@ -1489,7 +1372,7 @@
 
             <textarea
                 id="finalWish"
-                placeholder="Write your final wish to Lord Ganesha..."
+                placeholder="Write your  wish to Lord Ganesha..."
                 rows="5"
                 maxlength="500"
             ></textarea>
