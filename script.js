@@ -28,11 +28,12 @@ let exploredFeatures = new Set(
     )
 );
 
-let firebaseAuth =
-    window.firebaseAuth || null;
+const API_BASE_URL = "http://localhost:3000";
 
-let firebaseDB =
-    window.firebaseDB || null;
+let currentParticipantID =
+    Number(
+        localStorage.getItem("scanGaneshaParticipantID") || 0
+    );
 
 /* ============================================================
    PUZZLE STATE
@@ -586,7 +587,7 @@ document.addEventListener(
 
         initializeQR();
 
-        setupFirebaseAuth();
+        
 
         updatePuzzleName();
         updateFinalPage();
@@ -633,92 +634,6 @@ document.addEventListener(
    FIREBASE
 ============================================================ */
 
-async function setupFirebaseAuth() {
-
-    if (
-        !window.firebaseReady ||
-        !window.firebaseAuth
-    ) {
-        return;
-    }
-
-    firebaseAuth =
-        window.firebaseAuth;
-
-    firebaseDB =
-        window.firebaseDB;
-
-    try {
-
-        if (!firebaseAuth.currentUser) {
-
-            await firebaseAuth
-                .signInAnonymously();
-        }
-
-        currentParticipantUID =
-            firebaseAuth.currentUser
-                ? firebaseAuth.currentUser.uid
-                : null;
-
-        updatePuzzleImageAssignment();
-
-    } catch (error) {
-
-        console.error(
-            "Firebase authentication error:",
-            error
-        );
-
-        currentParticipantUID =
-            null;
-
-        updatePuzzleImageAssignment();
-    }
-}
-
-async function ensureFirebaseUser() {
-
-    if (
-        !window.firebaseReady ||
-        !window.firebaseAuth
-    ) {
-        return null;
-    }
-
-    firebaseAuth =
-        window.firebaseAuth;
-
-    firebaseDB =
-        window.firebaseDB;
-
-    try {
-
-        if (!firebaseAuth.currentUser) {
-
-            await firebaseAuth
-                .signInAnonymously();
-        }
-
-        currentParticipantUID =
-            firebaseAuth.currentUser
-                ? firebaseAuth.currentUser.uid
-                : null;
-
-        updatePuzzleImageAssignment();
-
-        return firebaseAuth.currentUser;
-
-    } catch (error) {
-
-        console.error(
-            "Firebase user error:",
-            error
-        );
-
-        return null;
-    }
-}
 
 /* ============================================================
    PAGE NAVIGATION
@@ -781,7 +696,7 @@ function handlePageOpen(pageId) {
         galleryPage: "gallery",
         musicPage: "music",
         gamesPage: "puzzle",
-        leaderboardPage: "leaderboard",
+    
         ecoPage: "eco",
         csPage: "cs",
         qrPage: "qr",
@@ -808,14 +723,7 @@ function handlePageOpen(pageId) {
         updateJourneyProgress();
     }
 
-    if (
-        pageId ===
-        "leaderboardPage"
-    ) {
-
-        loadPuzzleLeaderboard();
-    }
-
+    
     if (
         pageId ===
         "finalPage"
@@ -932,49 +840,53 @@ function updateParticipantNames() {
 }
 
 async function saveParticipant() {
-
     try {
+        const response = await fetch(
+            `${API_BASE_URL}/api/users`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: currentParticipantName,
+                    score: 0,
+                    time_seconds: 0,
+                    moves: 0,
+                    status: "Not Completed"
+                })
+            }
+        );
 
-        const user =
-            await ensureFirebaseUser();
-
-        if (
-            !user ||
-            !firebaseDB
-        ) {
-            return;
+        if (!response.ok) {
+            throw new Error(
+                `Server error: ${response.status}`
+            );
         }
 
-        await firebaseDB
-            .collection(
-                "participants"
-            )
-            .doc(
-                user.uid
-            )
-            .set(
-                {
-                    uid:
-                        user.uid,
+        const data =
+            await response.json();
 
-                    name:
-                        currentParticipantName,
+        if (
+            data.success &&
+            data.id
+        ) {
+            currentParticipantID =
+                Number(data.id);
 
-                    updatedAt:
-                        firebase.firestore
-                            .FieldValue
-                            .serverTimestamp()
-                },
-                {
-                    merge:
-                        true
-                }
+            localStorage.setItem(
+                "scanGaneshaParticipantID",
+                String(currentParticipantID)
             );
 
-    } catch (error) {
+            console.log(
+                "✅ Participant saved to SQLite"
+            );
+        }
 
+    } catch (error) {
         console.error(
-            "Participant save error:",
+            "❌ Participant save error:",
             error
         );
     }
@@ -2063,8 +1975,26 @@ function updatePuzzleName() {
 ============================================================ */
 
 async function startGaneshaPuzzle() {
+        const puzzleAttemptKey =
+    `scanGaneshaPuzzleAttemptUsed_${currentParticipantID}`;
 
-    await ensureFirebaseUser();
+const puzzleAttemptUsed =
+    localStorage.getItem(
+        puzzleAttemptKey
+    ) === "true";
+
+if (puzzleAttemptUsed) {
+    alert(
+        "🙏 You have already used your one puzzle attempt."
+    );
+    return;
+}
+
+localStorage.setItem(
+    puzzleAttemptKey,
+    "true"
+);
+   
 
     puzzleMoves =
         0;
@@ -2169,13 +2099,13 @@ async function startGaneshaPuzzle() {
 function createPuzzle() {
 
     puzzleTiles = [
-        0, 1, 2,
-        3, 4, 5,
-        6, 7, 8
+        0, 1, 2, 3,
+        4, 5, 6, 7,
+        8, 9, 10, 11,
+        12, 13, 14, 15
     ];
 
     do {
-
         puzzleTiles =
             shufflePuzzle(
                 puzzleTiles
@@ -2183,12 +2113,8 @@ function createPuzzle() {
 
     } while (
         puzzleTiles.every(
-            (
-                value,
-                index
-            ) =>
-                value ===
-                index
+            (value, index) =>
+                value === index
         )
     );
 
@@ -2237,7 +2163,6 @@ function shufflePuzzle(
 /* ============================================================
    RENDER PUZZLE
 ============================================================ */
-
 function renderPuzzle() {
 
     const board =
@@ -2249,8 +2174,7 @@ function renderPuzzle() {
         return;
     }
 
-    board.innerHTML =
-        "";
+    board.innerHTML = "";
 
     puzzleTiles.forEach(
         (
@@ -2263,34 +2187,31 @@ function renderPuzzle() {
                     "button"
                 );
 
-            tile.type =
-                "button";
+            tile.type = "button";
 
             tile.className =
                 "puzzle-piece";
 
             const row =
                 Math.floor(
-                    tileNumber /
-                    3
+                    tileNumber / 4
                 );
 
             const column =
-                tileNumber %
-                3;
+                tileNumber % 4;
 
             tile.style.backgroundImage =
                 `url("${puzzleImage}")`;
 
             tile.style.backgroundSize =
-                "300% 300%";
+                "400% 400%";
 
             tile.style.backgroundRepeat =
                 "no-repeat";
 
             tile.style.backgroundPosition =
-                `${column * 50}% ${
-                    row * 50
+                `${column * 33.333333}% ${
+                    row * 33.333333
                 }%`;
 
             tile.setAttribute(
@@ -2303,7 +2224,6 @@ function renderPuzzle() {
             tile.addEventListener(
                 "click",
                 () => {
-
                     selectPuzzlePiece(
                         position,
                         tile
@@ -2311,9 +2231,7 @@ function renderPuzzle() {
                 }
             );
 
-            board.appendChild(
-                tile
-            );
+            board.appendChild(tile);
         }
     );
 }
@@ -2533,6 +2451,21 @@ function updatePuzzleTimer() {
                 puzzleStartTime
             ) / 1000
         );
+            if (elapsed >= 20) {
+
+    const timer =
+        document.getElementById(
+            "puzzleTimer"
+        );
+
+    if (timer) {
+        timer.textContent =
+            "00:20";
+    }
+
+    finishPuzzle();
+    return;
+}
 
     const minutes =
         Math.floor(
@@ -2641,6 +2574,10 @@ async function finishPuzzle() {
 
         moves:
             puzzleMoves,
+        status:
+    elapsed >= 20
+        ? "Time Out"
+        : "Completed",
 
         image:
             puzzleImage,
@@ -2686,19 +2623,23 @@ async function finishPuzzle() {
                 <div class="success-icon">
                     🐘✨
                 </div>
-
                 <h2>
-                    Puzzle Completed!
-                </h2>
+    ${
+        elapsed >= 20
+            ? "⏰ Time's Up!"
+            : "🌺 Puzzle Completed!"
+    }
+</h2>
+
+                
 
                 <p>
-                    Congratulations,
-                    <strong>
-                        ${escapeHTML(
-                            currentParticipantName
-                        )}
-                    </strong>
-                    🙏
+                    ${
+    elapsed >= 20
+        ? `⏰ Time is over, <strong>${escapeHTML(currentParticipantName)}</strong>.`
+        : `🙏 Congratulations, <strong>${escapeHTML(currentParticipantName)}</strong>!`
+}
+                    
                 </p>
 
                 <p>
@@ -2722,26 +2663,11 @@ async function finishPuzzle() {
                     </strong>
                 </p>
 
-                <p>
-                    Your result has been saved to
-                    the Ganesha Puzzle leaderboard.
-                </p>
+                
 
-                <button
-                    type="button"
-                    class="gold-btn"
-                    onclick="showPage('leaderboardPage')"
-                >
-                    🏆 View Leaderboard
-                </button>
+                
 
-                <button
-                    type="button"
-                    class="outline-btn"
-                    onclick="restartGaneshaPuzzle()"
-                >
-                    🔄 Play Again
-                </button>
+                
 
             </div>
         `;
@@ -2754,15 +2680,23 @@ async function finishPuzzle() {
 
     if (hint) {
 
+    if (elapsed >= 20) {
+
+        hint.textContent =
+            "⏰ Time's up! Your puzzle attempt is over.";
+
+    } else {
+
         hint.textContent =
             "🌺 Divine puzzle completed successfully!";
     }
+}
 
     await savePuzzleScore(
         scoreData
     );
 
-    await loadPuzzleLeaderboard();
+    
 
     updateFinalPage();
 }
@@ -2773,43 +2707,12 @@ async function finishPuzzle() {
 
 function restartGaneshaPuzzle() {
 
-    stopPuzzleTimer();
 
-    puzzleCompleted =
-        false;
+    alert(
+        "🙏 You have already used your one puzzle attempt."
+    );
 
-    puzzleMoves =
-        0;
-
-    puzzleSelected =
-        null;
-
-    const result =
-        document.getElementById(
-            "puzzleResult"
-        );
-
-    const hint =
-        document.getElementById(
-            "puzzleHint"
-        );
-
-    if (result) {
-
-        result.innerHTML =
-            "";
-    }
-
-    if (hint) {
-
-        hint.textContent =
-            "Select two pieces to swap them.";
-    }
-
-    updatePuzzleImageAssignment();
-
-    createPuzzle();
-    startPuzzleTimer();
+    return;
 }
 
 /* ============================================================
@@ -2817,105 +2720,108 @@ function restartGaneshaPuzzle() {
 ============================================================ */
 
 /* ============================================================
-   FIREBASE SCORE
+   SAVE PUZZLE RESULT TO NODE.JS + SQLITE
 ============================================================ */
 
 async function savePuzzleScore(scoreData) {
 
     try {
 
-        const user =
-            await ensureFirebaseUser();
-
-        if (!user || !firebaseDB) {
+        if (!currentParticipantID) {
 
             console.error(
-                "Firebase is unavailable."
+                "❌ Participant ID is missing."
             );
 
-            saveLocalPuzzleScore(scoreData);
-
-            return;
+            return false;
         }
 
-        const playerName =
-            String(
-                currentParticipantName ||
-                "Devotee"
-            )
-                .trim()
-                .substring(0, 30);
 
-        const imagePath =
-            String(
-                scoreData.image ||
-                "images/ganesha.png"
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/users/${currentParticipantID}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        score:
+                            Number(
+                                scoreData.score || 0
+                            ),
+
+                        time_seconds:
+                            Number(
+                                scoreData.timeSeconds || 0
+                            ),
+
+                        moves:
+                            Number(
+                                scoreData.moves || 0
+                            ),
+
+                        status:
+                            scoreData.status ||
+                            "Completed"
+
+                    })
+                }
             );
 
-        await firebaseDB
-            .collection("puzzleScores")
-            .add({
 
-                uid:
-                    user.uid,
+        if (!response.ok) {
 
-                name:
-                    playerName,
+            throw new Error(
+                `Server returned ${response.status}`
+            );
 
-                score:
-                    Number(
-                        scoreData.score ||
-                        0
-                    ),
+        }
 
-                moves:
-                    Number(
-                        scoreData.moves ||
-                        0
-                    ),
 
-                timeSeconds:
-                    Number(
-                        scoreData.timeSeconds ||
-                        0
-                    ),
+        const data =
+            await response.json();
 
-                time:
-                    String(
-                        scoreData.time ||
-                        "00:00"
-                    ),
 
-                imageId:
-                    imagePath,
+        if (!data.success) {
 
-                image:
-                    imagePath,
+            throw new Error(
+                data.message ||
+                "Failed to save result"
+            );
 
-                createdAt:
-                    firebase.firestore
-                        .FieldValue
-                        .serverTimestamp()
-            });
+        }
 
-        currentParticipantUID =
-            user.uid;
 
         console.log(
-            "✅ Puzzle score saved"
+            "✅ Puzzle result saved to SQLite"
         );
+
+
+        return true;
+
 
     } catch (error) {
 
         console.error(
-            "❌ Firebase score save error:",
+            "❌ Puzzle result save error:",
             error
         );
+
 
         saveLocalPuzzleScore(
             scoreData
         );
+
+
+        return false;
+
     }
+
 }
 
 
@@ -2967,572 +2873,7 @@ function saveLocalPuzzleScore(scoreData) {
 }
 
 
-/* ============================================================
-   GLOBAL LEADERBOARD
-============================================================ */
 
-async function loadPuzzleLeaderboard() {
-
-    const container =
-        document.getElementById(
-            "puzzleLeaderboardRows"
-        );
-
-    if (!container) {
-        return;
-    }
-
-    container.innerHTML = `
-        <p class="leaderboard-loading">
-            🏆 Loading all devotees...
-        </p>
-    `;
-
-    try {
-
-        const user =
-            await ensureFirebaseUser();
-
-        if (!user || !firebaseDB) {
-
-            throw new Error(
-                "Firebase is unavailable."
-            );
-        }
-
-        currentParticipantUID =
-            user.uid;
-
-
-        /* ====================================================
-           GET ALL PARTICIPANTS
-           ==================================================== */
-
-        const participantsSnapshot =
-            await firebaseDB
-                .collection("participants")
-                .get();
-
-
-        /* ====================================================
-           GET ALL PUZZLE SCORES
-           ==================================================== */
-
-        const scoresSnapshot =
-            await firebaseDB
-                .collection("puzzleScores")
-                .get();
-
-
-        /* ====================================================
-           STORE BEST SCORE FOR EACH USER
-           ==================================================== */
-
-        const scoreMap =
-            new Map();
-
-        scoresSnapshot.forEach(
-            doc => {
-
-                const data =
-                    doc.data() || {};
-
-                const uid =
-                    data.uid ||
-                    doc.id;
-
-                const score =
-                    Number(
-                        data.score || 0
-                    );
-
-                const oldScore =
-                    scoreMap.get(uid);
-
-                if (
-                    !oldScore ||
-                    score >
-                        oldScore.score ||
-                    (
-                        score ===
-                            oldScore.score &&
-                        Number(
-                            data.timeSeconds ||
-                            999999
-                        ) <
-                            Number(
-                                oldScore.timeSeconds ||
-                                999999
-                            )
-                    )
-                ) {
-
-                    scoreMap.set(
-                        uid,
-                        {
-                            uid:
-                                uid,
-
-                            name:
-                                data.name ||
-                                "Devotee",
-
-                            score:
-                                score,
-
-                            moves:
-                                Number(
-                                    data.moves ||
-                                    0
-                                ),
-
-                            time:
-                                data.time ||
-                                "00:00",
-
-                            timeSeconds:
-                                Number(
-                                    data.timeSeconds ||
-                                    0
-                                ),
-
-                            imageId:
-                                data.imageId ||
-                                data.image ||
-                                "images/ganesha.png",
-
-                            played:
-                                true
-                        }
-                    );
-                }
-            }
-        );
-
-
-        /* ====================================================
-           BUILD GLOBAL LIST FROM ALL PARTICIPANTS
-           ==================================================== */
-
-        const leaderboard =
-            [];
-
-        participantsSnapshot.forEach(
-            doc => {
-
-                const data =
-                    doc.data() || {};
-
-                const uid =
-                    doc.id;
-
-                const existingScore =
-                    scoreMap.get(uid);
-
-                leaderboard.push({
-
-                    uid:
-                        uid,
-
-                    name:
-                        data.name ||
-                        existingScore?.name ||
-                        "Devotee",
-
-                    score:
-                        existingScore
-                            ? existingScore.score
-                            : 0,
-
-                    moves:
-                        existingScore
-                            ? existingScore.moves
-                            : 0,
-
-                    time:
-                        existingScore
-                            ? existingScore.time
-                            : "Not Played",
-
-                    timeSeconds:
-                        existingScore
-                            ? existingScore.timeSeconds
-                            : 999999,
-
-                    imageId:
-                        existingScore
-                            ? existingScore.imageId
-                            : "images/ganesha.png",
-
-                    played:
-                        Boolean(
-                            existingScore
-                        )
-                });
-            }
-        );
-
-
-        /* ====================================================
-           ADD OLD SCORE USERS THAT MAY NOT HAVE
-           A PARTICIPANT DOCUMENT
-           ==================================================== */
-
-        scoreMap.forEach(
-            (player, uid) => {
-
-                const alreadyExists =
-                    leaderboard.some(
-                        item =>
-                            item.uid === uid
-                    );
-
-                if (
-                    !alreadyExists
-                ) {
-
-                    leaderboard.push(
-                        player
-                    );
-                }
-            }
-        );
-
-
-        /* ====================================================
-           SORT
-           PLAYED USERS FIRST
-           HIGHEST SCORE FIRST
-           ==================================================== */
-
-        leaderboard.sort(
-            (a, b) => {
-
-                // Users who played come first
-                if (
-                    a.played !==
-                    b.played
-                ) {
-
-                    return a.played
-                        ? -1
-                        : 1;
-                }
-
-                // Highest score first
-                if (
-                    b.score !==
-                    a.score
-                ) {
-
-                    return b.score -
-                        a.score;
-                }
-
-                // Better time first
-                if (
-                    a.timeSeconds !==
-                    b.timeSeconds
-                ) {
-
-                    return a.timeSeconds -
-                        b.timeSeconds;
-                }
-
-                // Fewer moves first
-                if (
-                    a.moves !==
-                    b.moves
-                ) {
-
-                    return a.moves -
-                        b.moves;
-                }
-
-                // Finally sort names
-                return String(
-                    a.name
-                ).localeCompare(
-                    String(
-                        b.name
-                    )
-                );
-            }
-        );
-
-
-        renderPuzzleLeaderboard(
-            leaderboard
-        );
-
-        updateFinalRank(
-            leaderboard
-        );
-
-        console.log(
-            "✅ Global leaderboard loaded:",
-            leaderboard
-        );
-
-    } catch (error) {
-
-        console.error(
-            "❌ Global leaderboard error:",
-            error
-        );
-
-        container.innerHTML = `
-            <div class="leaderboard-empty">
-
-                <div style="font-size:50px;">
-                    ⚠️
-                </div>
-
-                <h3>
-                    Unable to load leaderboard
-                </h3>
-
-                <p>
-                    Please refresh the page.
-                </p>
-
-            </div>
-        `;
-    }
-}
-
-
-/* ============================================================
-   RENDER GLOBAL LEADERBOARD
-============================================================ */
-
-function renderPuzzleLeaderboard(
-    scores
-) {
-
-    const container =
-        document.getElementById(
-            "puzzleLeaderboardRows"
-        );
-
-    if (!container) {
-        return;
-    }
-
-    if (
-        !scores ||
-        scores.length === 0
-    ) {
-
-        container.innerHTML = `
-            <div class="leaderboard-empty">
-
-                <div style="font-size:50px;">
-                    🏆
-                </div>
-
-                <h3>
-                    No Devotees Yet
-                </h3>
-
-                <p>
-                    Be the first person to
-                    scan and join Scan Ganesha!
-                </p>
-
-            </div>
-        `;
-
-        return;
-    }
-
-    container.innerHTML =
-        "";
-
-    scores.forEach(
-        (
-            player,
-            index
-        ) => {
-
-            const row =
-                document.createElement(
-                    "div"
-                );
-
-            row.className =
-                "leaderboard-row";
-
-
-            const isYou =
-                player.uid &&
-                currentParticipantUID &&
-                player.uid ===
-                    currentParticipantUID;
-
-            if (isYou) {
-
-                row.classList.add(
-                    "current-player"
-                );
-            }
-
-
-            let rank =
-                `#${index + 1}`;
-
-            if (
-                index === 0
-            ) {
-
-                rank =
-                    "🥇";
-            } else if (
-                index === 1
-            ) {
-
-                rank =
-                    "🥈";
-            } else if (
-                index === 2
-            ) {
-
-                rank =
-                    "🥉";
-            }
-
-
-            const scoreText =
-                player.played
-                    ? Number(
-                        player.score ||
-                        0
-                    )
-                    : "Not Played";
-
-
-            const timeText =
-                player.played
-                    ? (
-                        player.time ||
-                        "00:00"
-                    )
-                    : "—";
-
-
-            const movesText =
-                player.played
-                    ? Number(
-                        player.moves ||
-                        0
-                    )
-                    : "—";
-
-
-            row.innerHTML = `
-
-                <div class="leaderboard-rank">
-                    ${rank}
-                </div>
-
-
-                <div class="leaderboard-name">
-
-                    ${escapeHTML(
-                        player.name ||
-                        "Devotee"
-                    )}
-
-                    ${
-                        isYou
-                            ? " ⭐"
-                            : ""
-                    }
-
-                </div>
-
-
-                <div class="leaderboard-image">
-
-                    <img
-                        src="${escapeHTML(
-                            player.imageId ||
-                            "images/ganesha.png"
-                        )}"
-                        alt="Ganesha"
-                        onerror="
-                            this.src='images/ganesha.png'
-                        "
-                    >
-
-                </div>
-
-
-                <div class="leaderboard-score">
-
-                    ${scoreText}
-
-                </div>
-
-
-                <div class="leaderboard-time">
-
-                    ⏱️ ${escapeHTML(
-                        timeText
-                    )}
-
-                </div>
-
-
-                <div class="leaderboard-moves">
-
-                    🔄 ${movesText}
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                row
-            );
-        }
-    );
-}
-
-
-/* ============================================================
-   FINAL RANK
-============================================================ */
-
-function updateFinalRank(
-    scores
-) {
-
-    const element =
-        document.getElementById(
-            "finalPuzzleRank"
-        );
-
-    if (!element) {
-        return;
-    }
-
-    const index =
-        scores.findIndex(
-            player =>
-                player.uid &&
-                currentParticipantUID &&
-                player.uid ===
-                    currentParticipantUID &&
-                player.played
-        );
-
-    element.textContent =
-        index >= 0
-            ? `#${index + 1}`
-            : "—";
-}
 
 /* ============================================================
    FINAL PAGE
@@ -3587,19 +2928,16 @@ function updateFinalPage() {
 
 /* ============================================================
    FINAL WISH
-============================================================ */
+=============================
 
+=============================== */
 async function saveFinalWish() {
 
     const field =
-        document.getElementById(
-            "finalWish"
-        );
+        document.getElementById("finalWish");
 
     const message =
-        document.getElementById(
-            "wishSavedMessage"
-        );
+        document.getElementById("wishSavedMessage");
 
     if (!field) {
         return;
@@ -3611,72 +2949,112 @@ async function saveFinalWish() {
     if (!wish) {
 
         if (message) {
-
             message.textContent =
-                "Please write your wish first 🙏";
+                "🙏 Please write your divine wish first.";
         }
+
+        field.focus();
 
         return;
     }
+
+
+    /* =====================================================
+       SAVE WISH LOCALLY
+    ===================================================== */
 
     localStorage.setItem(
         "scanGaneshaFinalWish",
         wish
     );
 
-    if (message) {
 
-        message.textContent =
-            "🙏 Your wish has been offered to Lord Ganesha.";
-    }
+    /* =====================================================
+       SAVE WISH TO SQLITE DATABASE
+    ===================================================== */
 
     try {
 
-        const user =
-            await ensureFirebaseUser();
+        if (!currentParticipantID) {
 
-        if (
-            user &&
-            firebaseDB
-        ) {
+            throw new Error(
+                "Participant ID is missing."
+            );
 
-            await firebaseDB
-                .collection(
-                    "participants"
-                )
-                .doc(
-                    user.uid
-                )
-                .set(
-                    {
-                        uid:
-                            user.uid,
-
-                        name:
-                            currentParticipantName,
-
-                        finalWish:
-                            wish,
-
-                        updatedAt:
-                            firebase.firestore
-                                .FieldValue
-                                .serverTimestamp()
-                    },
-                    {
-                        merge:
-                            true
-                    }
-                );
         }
+
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/users/${currentParticipantID}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        final_wish: wish
+                    })
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Server returned ${response.status}`
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            throw new Error(
+                data.message ||
+                "Failed to save divine wish"
+            );
+
+        }
+
+
+        console.log(
+            "✅ Divine wish saved to SQLite"
+        );
+
+
+        if (message) {
+
+            message.textContent =
+                "🙏 Your divine wish has been offered successfully.";
+
+        }
+
 
     } catch (error) {
 
         console.error(
-            "Final wish save error:",
+            "❌ Divine wish save error:",
             error
         );
+
+
+        if (message) {
+
+            message.textContent =
+                "🙏 Your wish is saved on this device.";
+
+        }
+
     }
+
 }
 
 /* ============================================================
@@ -4462,8 +3840,7 @@ window.restartGaneshaPuzzle =
 window.selectPuzzlePiece =
     selectPuzzlePiece;
 
-window.loadPuzzleLeaderboard =
-    loadPuzzleLeaderboard;
+
 
 window.copyWebsiteURL =
     copyWebsiteURL;
