@@ -1231,100 +1231,167 @@ function speakMantra(
     statusElement,
     button
 ) {
-    if (!("speechSynthesis" in window)) {
+
+    if (
+        !(
+            "speechSynthesis" in
+            window
+        )
+    ) {
+
         if (statusElement) {
+
             statusElement.textContent =
-                "⚠️ Speech is not supported in this browser.";
+                "Speech is not supported in this browser.";
         }
+
         return;
     }
 
     speechSynthesis.cancel();
 
-    const speakNow = () => {
-        const voices =
-            speechSynthesis.getVoices();
+    const utterance =
+        new SpeechSynthesisUtterance(
+            text
+        );
 
-        const teluguVoice =
-            voices.find(
-                voice =>
-                    (voice.lang || "")
-                        .toLowerCase()
-                        .startsWith("te")
-            );
+    utterance.rate =
+        0.68;
 
-        const utterance =
-            new SpeechSynthesisUtterance(text);
+    utterance.pitch =
+        1;
 
-        utterance.lang = "te-IN";
+    utterance.volume =
+        1;
 
-        if (teluguVoice) {
-            utterance.voice =
-                teluguVoice;
-        }
+    const chooseVoice =
+        () => {
 
-        utterance.rate = 0.65;
-        utterance.pitch = 1;
-        utterance.volume = 1;
+            const voices =
+                speechSynthesis
+                    .getVoices();
 
-        utterance.onstart = () => {
+            let voice =
+                voices.find(
+                    item =>
+                        (
+                            item.lang ||
+                            ""
+                        ).toLowerCase() ===
+                        "te-in"
+                );
+
+            if (!voice) {
+
+                voice =
+                    voices.find(
+                        item =>
+                            (
+                                item.lang ||
+                                ""
+                            ).toLowerCase()
+                                .startsWith(
+                                    "te"
+                                )
+                    );
+            }
+
+            if (!voice) {
+
+                voice =
+                    voices.find(
+                        item =>
+                            item.lang ===
+                            "en-IN"
+                    );
+            }
+
+            if (!voice) {
+
+                voice =
+                    voices.find(
+                        item =>
+                            (
+                                item.lang ||
+                                ""
+                            ).toLowerCase()
+                                .startsWith(
+                                    "en"
+                                )
+                    );
+            }
+
+            if (voice) {
+
+                utterance.voice =
+                    voice;
+            }
+        };
+
+    chooseVoice();
+
+    if (
+        speechSynthesis.onvoiceschanged !==
+        undefined
+    ) {
+
+        speechSynthesis.onvoiceschanged =
+            chooseVoice;
+    }
+
+    utterance.onstart =
+        () => {
+
             if (statusElement) {
+
                 statusElement.textContent =
                     "🔊 Playing mantra...";
             }
 
             if (button) {
-                button.disabled = true;
+
+                button.disabled =
+                    true;
             }
         };
 
-        utterance.onend = () => {
+    utterance.onend =
+        () => {
+
             if (statusElement) {
+
                 statusElement.textContent =
                     "🙏 Mantra completed.";
             }
 
             if (button) {
-                button.disabled = false;
+
+                button.disabled =
+                    false;
             }
         };
 
-        utterance.onerror = (event) => {
-            console.error(
-                "Speech error:",
-                event
-            );
+    utterance.onerror =
+        () => {
 
             if (statusElement) {
+
                 statusElement.textContent =
-                    "⚠️ Unable to play the mantra.";
+                    "⚠️ Speech playback could not be started.";
             }
 
             if (button) {
-                button.disabled = false;
+
+                button.disabled =
+                    false;
             }
         };
 
-        speechSynthesis.speak(
-            utterance
-        );
-    };
-
-    const voices =
-        speechSynthesis.getVoices();
-
-    if (voices.length > 0) {
-        speakNow();
-    } else {
-        speechSynthesis.onvoiceschanged =
-            () => {
-                speechSynthesis.onvoiceschanged =
-                    null;
-
-                speakNow();
-            };
-    }
+    speechSynthesis.speak(
+        utterance
+    );
 }
+
 
 function stopSpeech() {
 
