@@ -2451,7 +2451,7 @@ function updatePuzzleTimer() {
                 puzzleStartTime
             ) / 1000
         );
-            if (elapsed >= 20) {
+            if (elapsed >= 30) {
 
     const timer =
         document.getElementById(
@@ -2460,7 +2460,7 @@ function updatePuzzleTimer() {
 
     if (timer) {
         timer.textContent =
-            "00:20";
+            "00:30";
     }
 
     finishPuzzle();
@@ -2575,7 +2575,7 @@ async function finishPuzzle() {
         moves:
             puzzleMoves,
         status:
-    elapsed >= 20
+    elapsed >= 30
         ? "Time Out"
         : "Completed",
 
@@ -2625,7 +2625,7 @@ async function finishPuzzle() {
                 </div>
                 <h2>
     ${
-        elapsed >= 20
+        elapsed >= 30
             ? "⏰ Time's Up!"
             : "🌺 Puzzle Completed!"
     }
@@ -2635,7 +2635,7 @@ async function finishPuzzle() {
 
                 <p>
                     ${
-    elapsed >= 20
+    elapsed >= 30
         ? `⏰ Time is over, <strong>${escapeHTML(currentParticipantName)}</strong>.`
         : `🙏 Congratulations, <strong>${escapeHTML(currentParticipantName)}</strong>!`
 }
@@ -2680,7 +2680,7 @@ async function finishPuzzle() {
 
     if (hint) {
 
-    if (elapsed >= 20) {
+    if (elapsed >= 30) {
 
         hint.textContent =
             "⏰ Time's up! Your puzzle attempt is over.";
